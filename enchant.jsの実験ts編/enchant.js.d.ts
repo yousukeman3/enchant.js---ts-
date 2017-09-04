@@ -257,8 +257,8 @@ declare module enchant {
     class Label extends Entity {
         constructor();
 
-        text: any;
-        color: any;
+        text: string;
+        color: string;
 		// TODO
 	}
 
