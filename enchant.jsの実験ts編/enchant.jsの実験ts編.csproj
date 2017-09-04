@@ -71,6 +71,7 @@
   <ItemGroup>
     <Content Include="enchant.js" />
     <Content Include="enchant.min.js" />
+    <Content Include="index.html" />
     <Content Include="images\apad.png" />
     <Content Include="images\avatarBg1.png" />
     <Content Include="images\avatarBg2.png" />
