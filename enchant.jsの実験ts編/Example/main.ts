@@ -1,6 +1,6 @@
-﻿///<reference path="../enchant.js.d.ts"/>
-// code.9leap.net default template
+﻿// code.9leap.net default template
 // based on enchant.js v0.7.1
+///<reference path="../enchant.js.d.ts"/>
 
 enchant();
 
@@ -29,7 +29,7 @@ window.onload = function () {
 
         game.pushScene(scene1);
     };
-    game.debug();
+    game.start();
 };
 //seで困ったらこれをつかえ
 //http://wikiwiki.jp/piporpg/?%A5%B5%A5%A6%A5%F3%A5%C9%C1%C7%BA%E0%20%C7%DB%C9%DB%A5%B5%A5%A4%A5%C8

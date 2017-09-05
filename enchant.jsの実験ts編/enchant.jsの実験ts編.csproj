@@ -167,8 +167,8 @@
     <Folder Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <TypeScriptCompile Include="Example\main.ts" />
     <TypeScriptCompile Include="game1\main.ts" />
+    <TypeScriptCompile Include="Example\main.ts" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
