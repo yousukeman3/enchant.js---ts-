@@ -11,12 +11,13 @@ declare module enchant {
 
     class EventTarget {
 		// method
-		addEventListener(type:string, listener:(e:Event)=>any);
 
-		clearEventListener(type:string);
+        addEventListener(type: string, listener: (e: Event) => any);
 
-		dispatchEvent(e:Event);
-
+        clearEventListener(type: string);
+        
+        dispatchEvent(e: Event);
+        
 		on(type:string, listener:(e:Event)=>any);
 
 		removeEventListener(type:string, listener:(e:Event)=>any);
@@ -115,10 +116,10 @@ declare module enchant {
 
 	class Entity extends Node {
 		// field
-		backgroundColor:any;
-		buttonMode:any;
+		backgroundColor:string;
+		buttonMode:string;
 		buttonPressed:boolean;
-		compositeOperation:any;
+		compositeOperation:string;
 		height:number;
 		opacity:number;
 		originX:number;
@@ -148,7 +149,7 @@ declare module enchant {
 		constructor(weight:number, height:number);
 
 		// field
-		frame:any; // number[] or number
+        frame: number[] | number;
 		height:number;
 		width:number;
 		image:Surface;
@@ -170,7 +171,23 @@ declare module enchant {
 		// TODO
 	}
 
-	class DOMSound {
+    class DOMSound {
+
+        //field
+        currentTime: number;
+        duration: number;
+        volume: number;
+
+        //method
+        clone(): DOMSound;
+
+        static load(src: string, type?: string, callback?: () => any, onerror?: () => any): DOMSound;
+
+        pause(): void;
+
+        play(): void;
+
+        stop(): void;
 		// TODO
 	}
 
@@ -237,16 +254,17 @@ declare module enchant {
 		constructor();
 
 		// field
-		childNodes:any;
-		firstChild:any;
-		lastChild:any;
-		originX:any;
-		originY:any;
-		rotation:any;
-		scaleX:any;
-		scaleY:any;
+		childNodes:Node[];
+		firstChild:Node;
+		lastChild:Node;
+		originX:number;
+		originY:number;
+		rotation:number;
+		scaleX:number;
+		scaleY:number;
 
 		// method
+
 		addChild(node:Node);
 
 		insertBefore(node:Node, reference:Node);
@@ -257,8 +275,10 @@ declare module enchant {
     class Label extends Entity {
         constructor();
 
-        text: string;
         color: string;
+        font: string;
+        text: string;
+        textAlign: string;
 		// TODO
 	}
 

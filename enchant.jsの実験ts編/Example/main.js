@@ -19,8 +19,8 @@ window.onload = function () {
             game.resume();
         });
         label1.on('enterframe', function () {
-            label1.text = game.getElapsedTime();
-            if (label1.text == 10) {
+            label1.text = game.getElapsedTime().toString();
+            if (+label1.text == 10) {
                 game.pause();
             }
         });
