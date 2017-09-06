@@ -16,24 +16,47 @@ window.onload = function () {
         var ownMachine = new enchant.Sprite(32, 32);
         ownMachine.image = game.assets["http://coderun.9leap.net/codes/132391/shooting.png"];
         scene1.addChild(ownMachine);
-        var doubleCount: number;
+        var bullets: enchant.Sprite[];
         ownMachine.y = 320 - 32;
-        game.keybind('d'.charCodeAt(0), 'd');
+        game.keybind('D'.charCodeAt(0), 'Dash');
+        game.keybind('S'.charCodeAt(0), 'Shoot');
+        var ownMachineFunc: () => void;
+        var waitBullet = 5;
 
-        scene1.addEventListener('enterframe', function () {
-            console.log(game.input.d);
+        scene1.addEventListener('enterframe',ownMachineFunc = function (){
+            //console.log(game.input.Dash);
             if (game.input.right) {
-                ownMachine.x += 2;
-                if (game.input.d) {
-                    ownMachine.x += 2;
+                ownMachine.x += 4;
+                if (game.input.Dash) {
+                    ownMachine.x += 4;
                 }
-
+                if (ownMachine.x > 320 - 32){
+                    ownMachine.x = 320 - 32;
+                }
             }
             if (game.input.left) {
-                ownMachine.x -= 2;
+                ownMachine.x -= 4;
                 if (game.input.d) {
-                    ownMachine.x -= 2;
+                    ownMachine.x -= 4;
                 }
+                if (ownMachine.x < 0){
+                    ownMachine.x = 0;
+                }
+            }
+            if (game.input.Shoot) {
+                bullets.forEach(function (bullet, index, bulles) {
+                    if (bullet == null || bullet == undefined) {
+                        bullet = new enchant.Sprite(32, 32);
+                        bullet.x = ownMachine.x;
+                        bullet.y = ownMachine.y + 32;
+                    }
+                    if (!(bullet == null || bullet == undefined)) {
+                        bullet.y += 10;
+                        if (bullet.y > 320) {
+                            bullet = null;
+                        }
+                    }
+                });
             }
         });
         game.pushScene(scene1);
