@@ -14,15 +14,15 @@
  * https://github.com/toji/gl-matrix/
  */
 if (enchant.gl !== undefined) {
-    enchant.Core._loadFuncs['dae'] = function(src, callback) {
-        enchant.gl.Sprite3D.loadCollada(src, function(collada, src) {
+    enchant.Core._loadFuncs['dae'] = function (src, callback) {
+        enchant.gl.Sprite3D.loadCollada(src, function (collada, src) {
             enchant.Core.instance.assets[src] = collada;
             if (callback != null) {
                 callback();
             }
         });
     };
-    (function() {
+    (function () {
         /**
         * Create Sprite3D from Collada data.
         * At present, data that has joint and animation is not supported.
@@ -36,13 +36,13 @@ if (enchant.gl !== undefined) {
         * @param {function(enchant.pro.Sprite3D)} onload Callback when loading is complete. Sprite3D created from model will be delivered to argument
         * @static
         */
-        enchant.gl.Sprite3D.loadCollada = function(url, onload) {
+        enchant.gl.Sprite3D.loadCollada = function (url, onload) {
             if (typeof onload !== 'function') {
                 return;
             }
             var req = new XMLHttpRequest();
             req.open('GET', url, true);
-            req.onload = function() {
+            req.onload = function () {
                 var maxbonenum = 6;
                 var lib = {};
                 var collada = req.responseXML.getElementsByTagName('COLLADA')[0];
@@ -73,7 +73,8 @@ if (enchant.gl !== undefined) {
                             var skin = lib['controllers'][visualScene.nodes[k].controllerUrl].skin.getProcessedSkinData();
                             skeleton.calculateTableForIds(skin.ids);
                             rootColladaSkeletonSprite3D.addColladaSkeletonSprite3DFromNode(skeletonContainer, skin, skeleton, maxbonenum);
-                        } else {
+                        }
+                        else {
                             rootColladaSprite3D.addColladaSprite3DFromNode(visualScene.nodes[k]);
                         }
                     }
@@ -85,12 +86,12 @@ if (enchant.gl !== undefined) {
             req.send(null);
         };
         var Unit = enchant.Class.create({
-            initialize: function(xml) {
+            initialize: function (xml) {
                 this.xml = xml;
                 this._datas = {};
                 this.loadParams();
             },
-            loadParams: function() {
+            loadParams: function () {
                 for (var i = 0, l = this._childable.length; i < l; i++) {
                     var nodes = [];
                     var param = this._childable[i];
@@ -104,7 +105,7 @@ if (enchant.gl !== undefined) {
                     this._datas[param] = nodes;
                 }
             },
-            parseFloatArray: function(element) {
+            parseFloatArray: function (element) {
                 var array = [];
                 var floatStrings = (element.textContent).split(/\s+/);
                 for (var k = 0; k < floatStrings.length; k++) {
@@ -115,19 +116,19 @@ if (enchant.gl !== undefined) {
                 }
                 return array;
             },
-            getParentDirectory: function(path) {
+            getParentDirectory: function (path) {
                 return path.substring(0, path.lastIndexOf('/') + 1);
             },
-            getReferenceAttribute: function(element, attribute) {
+            getReferenceAttribute: function (element, attribute) {
                 return element.getAttribute(attribute).replace('#', '');
             },
-            getReferenceTextContent: function(element) {
+            getReferenceTextContent: function (element) {
                 return element.textContent.replace('#', '');
             }
         });
         Unit.prototype._childable = [];
         var Scene = enchant.Class.create(Unit, {
-            initialize: function(xml) {
+            initialize: function (xml) {
                 Unit.call(this, xml);
                 if (this._datas['instance_visual_scene']) {
                     this.visualSceneUrl = this.getReferenceAttribute(this._datas['instance_visual_scene'][0], 'url');
@@ -136,14 +137,14 @@ if (enchant.gl !== undefined) {
         });
         Scene.prototype._childable = ['instance_visual_scene'];
         var Image = enchant.Class.create(Unit, {
-            initialize: function(xml, url) {
+            initialize: function (xml, url) {
                 Unit.call(this, xml);
                 this.initFrom = '';
                 if (this._datas['init_from']) {
                     this.initFrom = this._datas['init_from'][0].textContent;
-                    if (this.initFrom.substr(0, 4) ==='file') {
-                        var spl=this.initFrom.split('/');
-                        this.initFrom=spl[spl.length-1];
+                    if (this.initFrom.substr(0, 4) === 'file') {
+                        var spl = this.initFrom.split('/');
+                        this.initFrom = spl[spl.length - 1];
                     }
                     if (this.initFrom.substr(0, 4) !== 'http') {
                         if (this.initFrom.substr(0, 2) === './') {
@@ -156,7 +157,7 @@ if (enchant.gl !== undefined) {
         });
         Image.prototype._childable = ['renderable', 'init_from', 'create_2d', 'create_3d', 'create_map'];
         var Geometry = enchant.Class.create(Unit, {
-            initialize: function(xml) {
+            initialize: function (xml) {
                 Unit.call(this, xml);
                 if (this._datas['mesh']) {
                     this.Mesh = new GeometryMesh(this._datas['mesh'][0]);
@@ -165,7 +166,7 @@ if (enchant.gl !== undefined) {
         });
         Geometry.prototype._childable = ['asset', 'convex_mesh', 'mesh', 'spline', 'extra'];
         var GeometryMesh = enchant.Class.create(Unit, {
-            initialize: function(xml) {
+            initialize: function (xml) {
                 Unit.call(this, xml);
                 this.srcs = [];
                 this.srcs.offset = null;
@@ -195,7 +196,7 @@ if (enchant.gl !== undefined) {
         });
         GeometryMesh.prototype._childable = ['source', 'vertices', 'lines', 'linestripes', 'polygons', 'polylist', 'triangles', 'trifans', 'tristrips', 'extra'];
         var Vertices = enchant.Class.create(Unit, {
-            initialize: function(xml) {
+            initialize: function (xml) {
                 Unit.call(this, xml);
                 this.source = {};
                 for (var i = 0; i < this._datas['input'].length; i++) {
@@ -208,7 +209,7 @@ if (enchant.gl !== undefined) {
         });
         Vertices.prototype._childable = ['input', 'extras'];
         var AbstractGeometryMeshTriangleData = enchant.Class.create(Unit, {
-            initialize: function(xml, srcs, vertices) {
+            initialize: function (xml, srcs, vertices) {
                 Unit.call(this, xml);
                 this.inputs = [];
                 this.primitives = [];
@@ -224,10 +225,12 @@ if (enchant.gl !== undefined) {
                             this.inputs[this._datas['input'][i].getAttribute('semantic') + 'offset'] = offset;
                             if (!isNaN(set)) {
                                 this.inputs[this._datas['input'][i].getAttribute('semantic') + 'set'] = set;
-                            } else {
-                                this.inputs[this._datas['input'][i].getAttribute('semantic') + 'set'] =0;
                             }
-                        } else if (vertices.id === sourceId) {
+                            else {
+                                this.inputs[this._datas['input'][i].getAttribute('semantic') + 'set'] = 0;
+                            }
+                        }
+                        else if (vertices.id === sourceId) {
                             for (var key in vertices.source) {
                                 if (srcs[vertices.source[key]]) {
                                     this._addSource(srcs, vertices.source[key], key);
@@ -244,8 +247,8 @@ if (enchant.gl !== undefined) {
                     }
                 }
             },
-            _calculatePrimitives: function(pointArray) {},
-            _addSource: function(sources, sourceId, inputId) {
+            _calculatePrimitives: function (pointArray) { },
+            _addSource: function (sources, sourceId, inputId) {
                 var source = sources[sourceId];
                 this.inputs[inputId] = source;
                 if (inputId === 'TEXCOORD') {
@@ -256,13 +259,13 @@ if (enchant.gl !== undefined) {
             }
         });
         var Triangle = enchant.Class.create(AbstractGeometryMeshTriangleData, {
-            _calculatePrimitives: function(pointArray) {
+            _calculatePrimitives: function (pointArray) {
                 this.primitives = pointArray;
             }
         });
         Triangle.prototype._childable = ['input', 'p'];
         var Polylist = enchant.Class.create(AbstractGeometryMeshTriangleData, {
-            _calculatePrimitives: function(primitives) {
+            _calculatePrimitives: function (primitives) {
                 var vcount = this.parseFloatArray(this._datas['vcount'][0]);
                 var num = 0;
                 var last = 0;
@@ -273,7 +276,8 @@ if (enchant.gl !== undefined) {
                         for (var j = 0; j < this.stride; j++) {
                             triangles.push(primitives[i * this.stride + j]);
                         }
-                    } else {
+                    }
+                    else {
                         for (var lj = 0; lj < this.stride; lj++) {
                             triangles.push(primitives[last * this.stride + lj]);
                         }
@@ -299,7 +303,7 @@ if (enchant.gl !== undefined) {
         });
         Polylist.prototype._childable = ['input', 'p', 'vcount'];
         var VisualScene = enchant.Class.create(Unit, {
-            initialize: function(xml) {
+            initialize: function (xml) {
                 Unit.call(this, xml);
                 this.nodes = [];
                 for (var i = 0, l = this._datas['node'].length; i < l; i++) {
@@ -309,7 +313,7 @@ if (enchant.gl !== undefined) {
         });
         VisualScene.prototype._childable = ['asset', 'node', 'evaluate_scene', 'extra'];
         var Node = enchant.Class.create(Unit, {
-            initialize: function(xml) {
+            initialize: function (xml) {
                 this.nodes = [];
                 this.childNodeIds = [];
                 this.skeletons = [];
@@ -321,7 +325,8 @@ if (enchant.gl !== undefined) {
                 if (xml) {
                     if (xml.getAttribute('sid')) {
                         this.sid = xml.getAttribute('sid');
-                    } else {
+                    }
+                    else {
                         this.sid = xml.getAttribute('id');
                     }
                     this.id = xml.getAttribute('id');
@@ -342,7 +347,8 @@ if (enchant.gl !== undefined) {
                     if (this._datas['instance_geometry'].length > 0) {
                         materialNode = this._datas['instance_geometry'][0];
                         this.geometryUrl = this.getReferenceAttribute(materialNode, 'url');
-                    } else if (this._datas['instance_controller'].length > 0) {
+                    }
+                    else if (this._datas['instance_controller'].length > 0) {
                         materialNode = this._datas['instance_controller'][0];
                         this.controllerUrl = this.getReferenceAttribute(materialNode, 'url');
                         var skels = this._datas['instance_controller'][0].getElementsByTagName('skeleton');
@@ -366,7 +372,7 @@ if (enchant.gl !== undefined) {
                     }
                 }
             },
-            resolveChildNodes: function(lib) {
+            resolveChildNodes: function (lib) {
                 this.__resolveChildNodes(lib, this.childNodeIds, this.nodes);
                 var libNodes = lib['nodes'];
                 var libVisualScene = lib['visual_scenes'];
@@ -376,10 +382,14 @@ if (enchant.gl !== undefined) {
                         if (libNodes[nodeKey]._getNodeInHirachy(this.skeletonChildNodeIds[key])) {
                             element = libNodes[nodeKey];
                         }
-                        if (element != null) {break;}
+                        if (element != null) {
+                            break;
+                        }
                     }
                     for (nodeKey in libVisualScene) {
-                        if (element != null) {break;}
+                        if (element != null) {
+                            break;
+                        }
                         if (libVisualScene[nodeKey]._getNodeInHirachy(this.skeletonChildNodeIds[key])) {
                             element = libNodes[nodeKey];
                         }
@@ -394,7 +404,8 @@ if (enchant.gl !== undefined) {
                         if (this.skeletons[i]._getNodeInHirachy(this.skeletons[j].id)) {
                             this.skeletons.splice(j, 1);
                             j--;
-                        } else if (this.skeletons[j]._getNodeInHirachy(this.skeletons[i].id)) {
+                        }
+                        else if (this.skeletons[j]._getNodeInHirachy(this.skeletons[i].id)) {
                             this.skeletons.splice(i, 1);
                             i--;
                             break;
@@ -402,7 +413,7 @@ if (enchant.gl !== undefined) {
                     }
                 }
             },
-            __resolveChildNodes: function(lib, childNodeIds, childArray) {
+            __resolveChildNodes: function (lib, childNodeIds, childArray) {
                 for (var key in childArray) {
                     childArray[key].resolveChildNodes(lib);
                 }
@@ -412,35 +423,46 @@ if (enchant.gl !== undefined) {
                     var element = null;
                     for (key in libNodes) {
                         element = libNodes[key]._getNodeInHirachy(childNodeIds[i]);
-                        if (element != null) {break;}
+                        if (element != null) {
+                            break;
+                        }
                     }
                     for (key in libVisualScene) {
-                        if (element != null) {break;}
+                        if (element != null) {
+                            break;
+                        }
                         var nodes = libVisualScene[key].nodes;
                         for (var nodeKey in nodes) {
                             element = nodes[nodeKey]._getNodeInHirachy(childNodeIds[i]);
-                            if (element != null) {break;}
+                            if (element != null) {
+                                break;
+                            }
                         }
                     }
                     if (element != null) {
                         childArray[element.id] = new Node(element.xml);
                         childArray[element.id].resolveChildNodes(lib);
                         childNodeIds.splice(i, 1);
-                    } else {
+                    }
+                    else {
                         i++;
                     }
                 }
             },
-            _getNodeInHirachy: function(id) {
-                if (this.id === id) {return this;}
+            _getNodeInHirachy: function (id) {
+                if (this.id === id) {
+                    return this;
+                }
                 var child = null;
                 for (var k in this.nodes) {
                     child = this.nodes[k]._getNodeInHirachy(id);
-                    if (child != null) {break;}
+                    if (child != null) {
+                        break;
+                    }
                 }
                 return child;
             },
-            getRotationMatrix: function() {
+            getRotationMatrix: function () {
                 var rotation = mat4.create();
                 mat4.identity(rotation);
                 for (var rotationSid in this.rotate) {
@@ -450,14 +472,14 @@ if (enchant.gl !== undefined) {
                 }
                 return rotation;
             },
-            getTranslationMatrix: function() {
+            getTranslationMatrix: function () {
                 var translation = mat4.create();
                 mat4.identity(translation);
                 var position = this.translate;
                 mat4.translate(translation, [position[0], position[1], position[2]]);
                 return translation;
             },
-            getnMatrix: function() {
+            getnMatrix: function () {
                 var matrix = mat4.create();
                 mat4.identity(matrix);
                 for (var matrixSid in this.nMatrix) {
@@ -465,19 +487,19 @@ if (enchant.gl !== undefined) {
                 }
                 return matrix;
             },
-            getNode: function() {
+            getNode: function () {
                 var table = this.nodes;
                 var child = [];
-                for (var key in table){
+                for (var key in table) {
                     child[key] = [];
                     child[key] = table[key].getNode();
-                    for(var ckey in child[key]){
+                    for (var ckey in child[key]) {
                         table[ckey] = child[key][ckey];
                     }
                 }
                 return table;
             },
-            getAnimationMatrixFromOneAnimationNode: function(Animation, libAnimationClips, flag) {
+            getAnimationMatrixFromOneAnimationNode: function (Animation, libAnimationClips, flag) {
                 var core = enchant.Core.instance;
                 var rotation = this.getRotationMatrix();
                 var translation = this.getTranslationMatrix();
@@ -527,26 +549,30 @@ if (enchant.gl !== undefined) {
                         if (okey2 === 'translation') {
                             mat4.identity(trans);
                             mat4.translate(trans, [output[okey2][i * 3], output[okey2][i * 3 + 1], output[okey2][i * 3 + 2]]);
-                        } else if (okey2 === 'scale') {
-                            //TODO !
-                        } else if (okey2 === 'matrix') {
+                        }
+                        else if (okey2 === 'scale') {
+                        }
+                        else if (okey2 === 'matrix') {
                             var tmpMat = [];
                             for (var j = 0; j < 16; j++) {
-                                tmpMat.push(output[okey2][i*16+j]);
+                                tmpMat.push(output[okey2][i * 16 + j]);
                             }
                             mat4.transpose(tmpMat);
-                            mat4.multiply(nMat,tmpMat);
-                        } else {
+                            mat4.multiply(nMat, tmpMat);
+                        }
+                        else {
                             for (var mkey in this.nMatrix) {
-                                if (okey2.indexOf('(')!==-1) {
+                                if (okey2.indexOf('(') !== -1) {
                                     if (mkey === okey2.split('(')[0]) {
                                         if (!isNaN(output[okey2][i])) {
                                             nMat[parseInt(okey2.split('(')[1].split(')')[0], 10) * 4 + parseInt(okey2.split(')(')[1].split(')')[0], 10)] = output[okey2][i];
-                                        } else {
+                                        }
+                                        else {
                                             nMat[parseInt(okey2.split('(')[1].split(')')[0], 10) * 4 + parseInt(okey2.split(')(')[1].split(')')[0], 10)] = output[okey2][0];
                                         }
                                     }
-                                } else {
+                                }
+                                else {
                                     var tmpMatrix = [];
                                     for (var oj = 0; oj < 16; oj++) {
                                         tmpMatrix.push(output[okey2][i * 16 + oj]);
@@ -558,7 +584,7 @@ if (enchant.gl !== undefined) {
                         }
                     }
                     animationMatrixes[sid][Math.round(core.fps * input[i])] = mat4.multiply(trans, rot, mat4.create());
-                    mat4.multiply(animationMatrixes[sid][Math.round(core.fps * input[i])],nMat);
+                    mat4.multiply(animationMatrixes[sid][Math.round(core.fps * input[i])], nMat);
                 }
                 if (Animation.animations.length > 0) {
                     var child = this.getAnimationMatrixesLocal(Animation.animations, libAnimationClips, true);
@@ -568,7 +594,7 @@ if (enchant.gl !== undefined) {
                 }
                 return animationMatrixes;
             },
-            getAnimationMatrixesLocal: function(libAnimations, libAnimationClips, flag) {
+            getAnimationMatrixesLocal: function (libAnimations, libAnimationClips, flag) {
                 var core = enchant.Core.instance;
                 var rotation = this.getRotationMatrix();
                 var translation = this.getTranslationMatrix();
@@ -594,7 +620,7 @@ if (enchant.gl !== undefined) {
                     for (var ackey in libAnimationClips) {
                         if (libAnimationClips[ackey].urls.indexOf(key) > -1 && flag) {
                             length = 0;
-                        } 
+                        }
                     }
                     if (libAnimations[key].animations.length > 0 && length > 0) {
                         var child = this.getAnimationMatrixesLocal(libAnimations[key].animations, libAnimationClips, true);
@@ -630,38 +656,42 @@ if (enchant.gl !== undefined) {
                         if (okey2 === 'translation') {
                             mat4.identity(trans);
                             mat4.translate(trans, [output[okey2][i * 3], output[okey2][i * 3 + 1], output[okey2][i * 3 + 2]]);
-                        } else if (okey2 === 'scale') {
-                            //TODO !
-                        } else if (okey2 === 'matrix') {
+                        }
+                        else if (okey2 === 'scale') {
+                        }
+                        else if (okey2 === 'matrix') {
                             var tmpMat = [];
                             for (var j = 0; j < 16; j++) {
-                                tmpMat.push(output[okey2][i*16+j]);
+                                tmpMat.push(output[okey2][i * 16 + j]);
                             }
                             mat4.transpose(tmpMat);
-                            mat4.multiply(nMat,tmpMat);
-                        } else {
+                            mat4.multiply(nMat, tmpMat);
+                        }
+                        else {
                             for (var mkey in this.nMatrix) {
-                                if (okey2.indexOf('(')!==-1) {
+                                if (okey2.indexOf('(') !== -1) {
                                     if (mkey === okey2.split('(')[0]) {
                                         if (!isNaN(output[okey2][i])) {
                                             nMat[parseInt(okey2.split('(')[1].split(')')[0], 10) * 4 + parseInt(okey2.split(')(')[1].split(')')[0], 10)] = output[okey2][i];
-                                        } else {
+                                        }
+                                        else {
                                             nMat[parseInt(okey2.split('(')[1].split(')')[0], 10) * 4 + parseInt(okey2.split(')(')[1].split(')')[0], 10)] = output[okey2][0];
                                         }
                                     }
-                                } else {
+                                }
+                                else {
                                     var tmpMatrix = [];
                                     for (var oj = 0; oj < 16; oj++) {
                                         tmpMatrix.push(output[okey2][i * 16 + oj]);
                                     }
                                     mat4.transpose(tmpMatrix);
-                                    mat4.multiply(nMat, tmpMatrix); 
+                                    mat4.multiply(nMat, tmpMatrix);
                                 }
                             }
                         }
                     }
                     animationMatrixes[this.sid][Math.round(core.fps * input[i])] = mat4.multiply(trans, rot, mat4.create());
-                    mat4.multiply(animationMatrixes[this.sid][Math.round(core.fps * input[i])],nMat);
+                    mat4.multiply(animationMatrixes[this.sid][Math.round(core.fps * input[i])], nMat);
                 }
                 for (var k in this.nodes) {
                     var childmat = this.nodes[k].getAnimationMatrixesLocal(libAnimations, libAnimationClips, true);
@@ -671,7 +701,7 @@ if (enchant.gl !== undefined) {
                 }
                 return animationMatrixes;
             },
-            getAnimationMatrixesLocalFromAnimationClips: function(libAnimations, libAnimationClips) {
+            getAnimationMatrixesLocalFromAnimationClips: function (libAnimations, libAnimationClips) {
                 var animationMatrixClips = [];
                 for (var ackey in libAnimationClips) {
                     var urls = libAnimationClips[ackey].urls;
@@ -698,14 +728,14 @@ if (enchant.gl !== undefined) {
         });
         Node.prototype._childable = ['node', 'Lookat', 'matrix', 'rotate', 'scale', 'skew', 'translate', 'instance_camera', 'instance_controller', 'instance_geometry', 'instance_light', 'instance_node', 'extra'];
         var Material = enchant.Class.create(Unit, {
-            initialize: function(xml) {
+            initialize: function (xml) {
                 Unit.call(this, xml);
                 this.effectUrl = this.getReferenceAttribute(this._datas['instance_effect'][0], 'url');
             }
         });
         Material.prototype._childable = ['asset', 'instance_effect', 'extra'];
         var Animation = enchant.Class.create(Unit, {
-            initialize: function(xml) {
+            initialize: function (xml) {
                 Unit.call(this, xml);
                 this.srcs = [];
                 this.channels = [];
@@ -715,7 +745,7 @@ if (enchant.gl !== undefined) {
                     this.animations[ai] = new Animation(this._datas['animation'][ai]);
                 }
                 for (var ci = 0, cl = this._datas['channel'].length; ci < cl; ci++) {
-                    this.channels[ci]={};
+                    this.channels[ci] = {};
                     this.channels[ci].target = this.getReferenceAttribute(this._datas['channel'][ci], 'target');
                     this.channels[ci].samplerId = this.getReferenceAttribute(this._datas['channel'][ci], 'source');
                 }
@@ -734,17 +764,17 @@ if (enchant.gl !== undefined) {
         });
         Animation.prototype._childable = ['asset', 'animation', 'source', 'sampler', 'channel', 'extra'];
         var AnimationClip = enchant.Class.create(Unit, {
-           initialize: function(xml) {
-               Unit.call(this, xml);
-               this.urls = [];
-               for (var i = 0, l = this._datas['instance_animation'].length; i < l; i++) {
-                   this.urls.push(this._datas['instance_animation'][i].getAttribute('url').replace('#', ''));
-               }
-           } 
+            initialize: function (xml) {
+                Unit.call(this, xml);
+                this.urls = [];
+                for (var i = 0, l = this._datas['instance_animation'].length; i < l; i++) {
+                    this.urls.push(this._datas['instance_animation'][i].getAttribute('url').replace('#', ''));
+                }
+            }
         });
-        AnimationClip.prototype._childable = ['asset','instance_animation','instance_formula','extra'];
+        AnimationClip.prototype._childable = ['asset', 'instance_animation', 'instance_formula', 'extra'];
         var Sampler = enchant.Class.create(Unit, {
-            initialize: function(xml, srcs) {
+            initialize: function (xml, srcs) {
                 Unit.call(this, xml);
                 this.input = [];
                 this.output = [];
@@ -760,7 +790,7 @@ if (enchant.gl !== undefined) {
         });
         Sampler.prototype._childable = ['input'];
         var Controller = enchant.Class.create(Unit, {
-            initialize: function(xml) {
+            initialize: function (xml) {
                 Unit.call(this, xml);
                 for (var i = 0, l = this._datas['skin'].length; i < l; i++) {
                     this.skin = new Skin(this._datas['skin'][i]);
@@ -769,7 +799,7 @@ if (enchant.gl !== undefined) {
         });
         Controller.prototype._childable = ['asset', 'skin', 'morph', 'extra'];
         var Skin = enchant.Class.create(Unit, {
-            initialize: function(xml) {
+            initialize: function (xml) {
                 Unit.call(this, xml);
                 this.source = this.getReferenceAttribute(xml, 'source');
                 this.sources = [];
@@ -807,7 +837,7 @@ if (enchant.gl !== undefined) {
                     }
                 }
             },
-            getProcessedSkinData: function() {
+            getProcessedSkinData: function () {
                 var resultSkin = {};
                 resultSkin.joints = {};
                 var ids = {};
@@ -839,15 +869,17 @@ if (enchant.gl !== undefined) {
         });
         Skin.prototype._childable = ['bind_shape_matrix', 'source', 'joints', 'vertex_weights', 'extra'];
         var Effect = enchant.Class.create(Unit, {
-            getFieldFromXMLWithDefaultValue: function(defaultValue, elementName, floatArrayName) {
+            getFieldFromXMLWithDefaultValue: function (defaultValue, elementName, floatArrayName) {
                 var element = this._datas['profile_COMMON'][0].getElementsByTagName(elementName)[0];
                 if (element) {
                     var array = element.getElementsByTagName(floatArrayName)[0];
-                    if (array) {return this.parseFloatArray(array);}
+                    if (array) {
+                        return this.parseFloatArray(array);
+                    }
                 }
                 return defaultValue;
             },
-            initialize: function(xml) {
+            initialize: function (xml) {
                 Unit.call(this, xml);
                 if (this._datas['profile_COMMON'][0].getElementsByTagName('newparam')[0]) {
                     this.imageSrc = this._datas['profile_COMMON'][0].getElementsByTagName('newparam')[0].getElementsByTagName('surface')[0].getElementsByTagName('init_from')[0].textContent;
@@ -864,7 +896,6 @@ if (enchant.gl !== undefined) {
             }
         });
         Effect.prototype._childable = ['asset', 'annotate', 'image', 'newparam', 'profile_CG', 'profile_GLSL', 'profile_COMMON', 'extra'];
-
         /**
          * Exports collada.gl.enchant.js class to enchant.
          */
@@ -881,14 +912,14 @@ if (enchant.gl !== undefined) {
              * @constructs
              * @extends enchant.gl.Bone
              */
-            initialize: function(node, parentpos, parentrot) {
+            initialize: function (node, parentpos, parentrot) {
                 var rotation = node.getRotationMatrix();
                 var translation = node.getTranslationMatrix();
                 var matrix = node.getnMatrix();
                 var animationMatrixes = [];
                 animationMatrixes[0] = [];
                 animationMatrixes[0][node.sid] = mat4.multiply(translation, rotation, mat4.create());
-                mat4.multiply(animationMatrixes[0][node.sid],matrix);
+                mat4.multiply(animationMatrixes[0][node.sid], matrix);
                 var pos = vec3.create([animationMatrixes[0][node.sid][12], animationMatrixes[0][node.sid][13], animationMatrixes[0][node.sid][14]]);
                 var rotation3x3 = mat4.toMat3(animationMatrixes[0][node.sid], mat3.create());
                 mat3.transpose(rotation3x3);
@@ -897,7 +928,8 @@ if (enchant.gl !== undefined) {
                 if (parentrot) {
                     wquatanion = quat4.multiply(parentrot, quatanion, quat4.create());
                     local = quat4.multiplyVec3(parentrot, vec3.create(pos));
-                } else {
+                }
+                else {
                     wquatanion = quatanion;
                     local = vec3.create(pos);
                 }
@@ -918,18 +950,20 @@ if (enchant.gl !== undefined) {
              * @constructs
              * @extends enchant.gl.Skeleton
              */
-            initialize: function() {
+            initialize: function () {
                 enchant.gl.Skeleton.call(this);
             },
-            calculateTableForIds: function(ids) {
+            calculateTableForIds: function (ids) {
                 this.table = this._calculateFlatTableForIds(this, ids);
             },
-            _calculateFlatTableForIds: function(skelPart, ids) {
+            _calculateFlatTableForIds: function (skelPart, ids) {
                 var table = {};
                 table.pos = [];
                 table.rot = [];
                 for (var i = 0; i < 4; i++) {
-                    if (i < 3) {table['pos'][ids[skelPart._name] * 3 + i] = skelPart._globalpos[i];}
+                    if (i < 3) {
+                        table['pos'][ids[skelPart._name] * 3 + i] = skelPart._globalpos[i];
+                    }
                     table['rot'][ids[skelPart._name] * 4 + i] = skelPart._globalrot[i];
                 }
                 for (var x = 0, l = skelPart.childNodes.length; x < l; x++) {
@@ -954,7 +988,7 @@ if (enchant.gl !== undefined) {
              * @constructs
              * @extends enchant.gl.Mesh
              */
-            initialize: function(triangles) {
+            initialize: function (triangles) {
                 enchant.gl.Mesh.call(this);
                 this.parseMeshFromGeometryMesh(triangles);
                 this.colors = [];
@@ -962,7 +996,7 @@ if (enchant.gl !== undefined) {
                     this.colors[i] = 1.0;
                 }
             },
-            parseMeshFromGeometryMesh: function(triangles) {
+            parseMeshFromGeometryMesh: function (triangles) {
                 var inputs = triangles.inputs;
                 this.vertices = [];
                 this.normals = [];
@@ -979,9 +1013,10 @@ if (enchant.gl !== undefined) {
                         this.normals.push(inputs['NORMAL'][index], inputs['NORMAL'][index + 1], inputs['NORMAL'][index + 2]);
                     }
                     if (triangles.inputs['TEXCOORDoffset'] >= 0) {
-                        index = triangles.primitives[k + triangles.inputs['TEXCOORDoffset']] * (2+triangles.inputs['TEXCOORDset']);
+                        index = triangles.primitives[k + triangles.inputs['TEXCOORDoffset']] * (2 + triangles.inputs['TEXCOORDset']);
                         this.texCoords.push(inputs['TEXCOORD'][index], inputs['TEXCOORD'][index + 1]);
-                    } else {
+                    }
+                    else {
                         this.texCoords.push(0, 0);
                     }
                 }
@@ -1001,7 +1036,7 @@ if (enchant.gl !== undefined) {
              * @constructs
              * @extends enchant.gl.collada.ColladaMesh
              */
-            initialize: function(triangles) {
+            initialize: function (triangles) {
                 enchant.gl.collada.ColladaMesh.call(this, triangles);
                 var vpos1Buffer = new enchant.gl.Buffer(enchant.gl.Buffer.VERTICES);
                 var vpos2Buffer = new enchant.gl.Buffer(enchant.gl.Buffer.VERTICES);
@@ -1016,13 +1051,13 @@ if (enchant.gl !== undefined) {
                 this._addAttribute(weights1Buffer, 'weights1');
                 this._addAttribute(weights2Buffer, 'weights2');
             },
-            _addAttribute: function(buffer, prop) {
+            _addAttribute: function (buffer, prop) {
                 this['_' + prop] = buffer;
                 Object.defineProperty(this, prop, {
-                    get: function() {
+                    get: function () {
                         return this['_' + prop]._array;
                     },
-                    set: function(array) {
+                    set: function (array) {
                         this['_' + prop]._array = array;
                         if (this._appear) {
                             this['_' + prop]._bufferData();
@@ -1044,7 +1079,7 @@ if (enchant.gl !== undefined) {
              * @constructs
              * @extends enchant.gl.Sprite3D
              */
-            initialize: function(lib, node, triangles) {
+            initialize: function (lib, node, triangles) {
                 enchant.gl.Sprite3D.call(this);
                 this.lib = lib;
                 if (triangles) {
@@ -1052,10 +1087,10 @@ if (enchant.gl !== undefined) {
                     this.initSpriteTexture(node, lib, triangles);
                 }
             },
-            _getMesh: function(triangles) {
+            _getMesh: function (triangles) {
                 return null;
             },
-            getPose: function(poses, length, localframe) {
+            getPose: function (poses, length, localframe) {
                 var core = enchant.Core.instance;
                 var frame = (core.frame) % length;
                 if (localframe) {
@@ -1067,7 +1102,7 @@ if (enchant.gl !== undefined) {
                 }
                 return pose;
             },
-            createPoses: function(node, poses, lib) {
+            createPoses: function (node, poses, lib) {
                 var matrix = node.getAnimationMatrixesLocal(lib['animations'], lib['animation_clips'], true);
                 var length = 0;
                 for (var k in matrix) {
@@ -1083,8 +1118,8 @@ if (enchant.gl !== undefined) {
                 }
                 return length;
             },
-            createPosesClips: function(node, poseclips, lib) {
-                var matrixclips = node.getAnimationMatrixesLocalFromAnimationClips(lib['animations'],lib['animation_clips']);
+            createPosesClips: function (node, poseclips, lib) {
+                var matrixclips = node.getAnimationMatrixesLocalFromAnimationClips(lib['animations'], lib['animation_clips']);
                 var length = [];
                 var core = enchant.Core.instance;
                 for (var pkey in matrixclips) {
@@ -1097,7 +1132,8 @@ if (enchant.gl !== undefined) {
                             var num = 0;
                             if (matrix[mkey].length > parseInt(lib['animation_clips'][pkey].start * core.fps, 10)) {
                                 num = i - parseInt(lib['animation_clips'][pkey].start * core.fps, 10);
-                            } else {
+                            }
+                            else {
                                 num = i;
                             }
                             var pos = vec3.create([matrix[mkey][i][12], matrix[mkey][i][13], matrix[mkey][i][14]]);
@@ -1113,7 +1149,7 @@ if (enchant.gl !== undefined) {
                 }
                 return length;
             },
-            initSpriteTexture: function(node, lib, triangles) {
+            initSpriteTexture: function (node, lib, triangles) {
                 var libMaterials = lib['materials'];
                 var libEffects = lib['effects'];
                 var libImages = lib['images'];
@@ -1128,18 +1164,18 @@ if (enchant.gl !== undefined) {
                         texture.specular = effect.specular;
                         texture.shininess = effect.shininess[0];
                         if (effect.imageSrc) {
-                            texture.src=libImages[effect.imageSrc].initFrom;
+                            texture.src = libImages[effect.imageSrc].initFrom;
                         }
                     }
                 }
             },
-            _getTriangles: function(geometry, index) {
+            _getTriangles: function (geometry, index) {
                 if (geometry) {
                     return geometry.Mesh.triangles[index];
                 }
                 return null;
             },
-            _getTrianglesLength: function(geometry) {
+            _getTrianglesLength: function (geometry) {
                 if (geometry) {
                     return geometry.Mesh.triangles.length;
                 }
@@ -1155,23 +1191,23 @@ if (enchant.gl !== undefined) {
             * Animation clip will be played in the order that it is added.
             * @param {String} clipId
             */
-            pushAnimationClip: function(clipId){
+            pushAnimationClip: function (clipId) {
                 this.childNodes[1].pushAnimationClip(clipId);
             },
             /**
             * Delete added animation clip.
             */
-            clearAnimationClip: function(){
+            clearAnimationClip: function () {
                 this.childNodes[1].clearAnimationClip();
             },
-            getAnimationClip: function() {
+            getAnimationClip: function () {
                 return this.childNodes[1].animationClips;
             },
             loop: {
-                set: function(flag) {
+                set: function (flag) {
                     this.childNodes[1].loop = flag;
                 },
-                get: function() {
+                get: function () {
                     return this.childNodes[1].loop;
                 }
             }
@@ -1180,7 +1216,7 @@ if (enchant.gl !== undefined) {
          * @scope enchant.gl.collada.ColladaSprite3D.prototype
          */
         enchant.gl.collada.ColladaSprite3D = enchant.Class.create(enchant.gl.collada.AbstractColladaSprite3D, {
-            _getMesh: function(triangles) {
+            _getMesh: function (triangles) {
                 return new enchant.gl.collada.ColladaMesh(triangles);
             },
             /**
@@ -1192,7 +1228,7 @@ if (enchant.gl !== undefined) {
              * @constructs
              * @extends enchant.gl.collada.AbstractColladaSprite3D
              */
-            addColladaSprite3DFromNode: function(node) {
+            addColladaSprite3DFromNode: function (node) {
                 var geometry = this.lib['geometries'][node.geometryUrl];
                 var trianglesLength = this._getTrianglesLength(geometry);
                 var currentTriangle = 0;
@@ -1203,7 +1239,8 @@ if (enchant.gl !== undefined) {
                         sprite.x = translate[0];
                         sprite.y = translate[1];
                         sprite.z = translate[2];
-                    } else {
+                    }
+                    else {
                         sprite.x = sprite.y = sprite.z = 0;
                     }
                     var rotation = [];
@@ -1215,9 +1252,11 @@ if (enchant.gl !== undefined) {
                         var sid = rotate.getAttribute('sid');
                         if (sid === 'rotateZ') {
                             rotateZ = node.parseFloatArray(rotate);
-                        } else if (sid === 'rotateY') {
+                        }
+                        else if (sid === 'rotateY') {
                             rotateY = node.parseFloatArray(rotate);
-                        } else if (sid === 'rotateX') {
+                        }
+                        else if (sid === 'rotateX') {
                             rotateX = node.parseFloatArray(rotate);
                         }
                     }
@@ -1230,7 +1269,8 @@ if (enchant.gl !== undefined) {
                         var matrix = node.parseFloatArray(node._datas['matrix'][0]);
                         var transposed = [matrix[0], matrix[4], matrix[8], matrix[12], matrix[1], matrix[5], matrix[9], matrix[13], matrix[2], matrix[6], matrix[10], matrix[14], matrix[3], matrix[7], matrix[11], matrix[15]];
                         sprite.matrix = transposed;
-                    } else {
+                    }
+                    else {
                         sprite.matrix = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
                     }
                     if (node._datas['scale'][0]) {
@@ -1238,7 +1278,8 @@ if (enchant.gl !== undefined) {
                         sprite.scaleX = scale[0];
                         sprite.scaleY = scale[1];
                         sprite.scaleZ = scale[2];
-                    } else {
+                    }
+                    else {
                         sprite.scaleX = sprite.scaleY = sprite.scaleZ = 1;
                     }
                     var poses;
@@ -1250,23 +1291,22 @@ if (enchant.gl !== undefined) {
                     poses = [];
                     //var poselength = this.createPoses(node, poses, this.lib);
                     //if (poselength > 0) {
-                        //sprite.addEventListener('enterframe', function() {
-                            //var currentPose = this.getPose(poses, poselength)[node.sid];
-
-                            // TODO : USE CURRENT POSE TO MODIFY SPRITE ROTATION / TRANSLATION
-                            //var mat = new Quat();
-                            //mat._quat = currentPose._rotation;
-                            //console.log(currentPose._rotation);
-                            //sprite.rotationApply(mat);
-                            //                          var glMat = mat4.create();
-                            //                          mat.toMat4(glMat);
-                            //                          mat4.multiply(sprite._rotation, glMat);
-                            //mat4.rotateX(sprite._rotation, currentPose._rotation[2]);
-                            //mat4.rotateY(sprite._rotation, currentPose._rotation[1]);
-                            //mat4.rotateZ(sprite._rotation, currentPose._rotation[0]);
-                            //sprite._changedRotation = true;
-                            //sprite.translate(currentPose._position[2],currentPose._position[1],currentPose._position[0]);
-                        //});
+                    //sprite.addEventListener('enterframe', function() {
+                    //var currentPose = this.getPose(poses, poselength)[node.sid];
+                    // TODO : USE CURRENT POSE TO MODIFY SPRITE ROTATION / TRANSLATION
+                    //var mat = new Quat();
+                    //mat._quat = currentPose._rotation;
+                    //console.log(currentPose._rotation);
+                    //sprite.rotationApply(mat);
+                    //                          var glMat = mat4.create();
+                    //                          mat.toMat4(glMat);
+                    //                          mat4.multiply(sprite._rotation, glMat);
+                    //mat4.rotateX(sprite._rotation, currentPose._rotation[2]);
+                    //mat4.rotateY(sprite._rotation, currentPose._rotation[1]);
+                    //mat4.rotateZ(sprite._rotation, currentPose._rotation[0]);
+                    //sprite._changedRotation = true;
+                    //sprite.translate(currentPose._position[2],currentPose._position[1],currentPose._position[0]);
+                    //});
                     //}
                     this.addChild(sprite);
                     currentTriangle++;
@@ -1286,28 +1326,29 @@ if (enchant.gl !== undefined) {
              * @constructs
              * @extends enchant.gl.collada.ColladaSprite3D
              */
-            initialize: function(lib, node, triangles) {
+            initialize: function (lib, node, triangles) {
                 enchant.gl.collada.AbstractColladaSprite3D.call(this, lib, node, triangles);
                 this.program = enchant.gl.collada.COLLADA_SHADER_PROGRAM;
                 this.animation = [];
-                this.defaultAnimation = function(){
+                this.defaultAnimation = function () {
                 };
                 this.animationClips = [];
                 this.uMVMatrix = mat4.create();
                 this.uNMatrix = mat3.create();
-                this.applyAnimationChild = function() {
+                this.applyAnimationChild = function () {
                     for (var cni = 0, cnl = this.childNodes.length; cni < cnl; cni++) {
                         this.childNodes[cni].defaultAnimation(this.childNodes[cni]);
                         this.childNodes[cni].applyAnimationChild();
                     }
                 };
-                this.addEventListener("enterframe", function() {
+                this.addEventListener("enterframe", function () {
                     this.applyAnimationChild();
                     if (this.animation.length === 0) {
-                    } else {
+                    }
+                    else {
                         var first = this.animation[0];
                         first.frame++;
-                        for(var i = 0, l = this.childNodes.length; i < l; i++) {
+                        for (var i = 0, l = this.childNodes.length; i < l; i++) {
                             first.animation.enterframe(this.childNodes[i], first.frame);
                         }
                         if (first.frame >= this.animation[0].animation.length) {
@@ -1320,15 +1361,15 @@ if (enchant.gl !== undefined) {
                     }
                 });
             },
-            pushAnimationClip: function(clipId) {
-                if(this.animationClips[clipId]){
-                    this.animation.push({animation: this.animationClips[clipId], frame: 0});
+            pushAnimationClip: function (clipId) {
+                if (this.animationClips[clipId]) {
+                    this.animation.push({ animation: this.animationClips[clipId], frame: 0 });
                 }
             },
-            clearAnimationClip: function() {
+            clearAnimationClip: function () {
                 this.animation = [];
             },
-            _getMesh: function(triangles) {
+            _getMesh: function (triangles) {
                 return new enchant.gl.collada.ColladaSkeletonSpriteMesh(triangles);
             },
             /**
@@ -1340,21 +1381,21 @@ if (enchant.gl !== undefined) {
              * @constructs
              * @extends enchant.gl.collada.ColladaSprite3D
              */
-            addColladaSkeletonSprite3DFromNode: function(node, skin, skeleton, maxbonenum) {
+            addColladaSkeletonSprite3DFromNode: function (node, skin, skeleton, maxbonenum) {
                 var controller = this.lib['controllers'][node.controllerUrl];
                 var geometry = this.lib['geometries'][controller.skin.source];
                 var trianglesLength = this._getTrianglesLength(geometry);
                 var currentTriangle = 0;
-                var makeEnterframe = function(poses, length, skin, maxbonem) {
-                    return function(obj) {
+                var makeEnterframe = function (poses, length, skin, maxbonem) {
+                    return function (obj) {
                         skeleton.setPoses(obj.getPose(poses, length));
                         skeleton.solveFKs();
                         skeleton.calculateTableForIds(skin.ids);
                         obj.mesh.udBoneInfo = obj.calculateSkeletonTable(obj.divisioninfo.dividedIndices, skeleton.table, maxbonenum);
                     };
                 };
-                var makeClipEnterframe = function(poses, length, skin, maxbonem, clipId) {
-                    return function(obj, frame) {
+                var makeClipEnterframe = function (poses, length, skin, maxbonem, clipId) {
+                    return function (obj, frame) {
                         skeleton.setPoses(obj.getPose(poses, length, frame));
                         skeleton.solveFKs();
                         skeleton.calculateTableForIds(skin.ids);
@@ -1367,14 +1408,11 @@ if (enchant.gl !== undefined) {
                     var arrays = this.createStaticArrayForShader(triangles, skin, skeleton);
                     child.divisioninfo = this.getDivisionInfo(arrays, skeleton.table, maxbonenum);
                     this.addChild(child);
-
                     child.mesh.vpos1 = arrays.vectorFromBone1;
                     child.mesh.vpos2 = arrays.vectorFromBone2;
                     child.mesh.vpos3 = arrays.vectorFromBone3;
-
                     child.mesh.weights1 = arrays.weights1;
                     child.mesh.weights2 = arrays.weights2;
-
                     child.mesh.dividedpoints = child.divisioninfo.dividedPoint;
                     child.mesh.boneIndices = child.divisioninfo.boneIndices;
                     child.mesh.udBoneInfo = child.divisioninfo.skeletontable;
@@ -1385,7 +1423,7 @@ if (enchant.gl !== undefined) {
                     for (var clk in cliplength) {
                         if (cliplength[clk] > 0) {
                             var clipenterframe = makeClipEnterframe(posesclips[clk], cliplength[clk], skin, maxbonenum, clk);
-                            this.animationClips[clk] = {enterframe: clipenterframe, length: cliplength[clk]};
+                            this.animationClips[clk] = { enterframe: clipenterframe, length: cliplength[clk] };
                         }
                     }
                     if (length > 0) {
@@ -1394,7 +1432,7 @@ if (enchant.gl !== undefined) {
                     currentTriangle++;
                 } while (currentTriangle < trianglesLength);
             },
-            calculateSkeletonTable: function(dividedIndices, table, n) {
+            calculateSkeletonTable: function (dividedIndices, table, n) {
                 var skeletontable = [];
                 var indices, index, postable, rottable;
                 for (var i = 0, l = dividedIndices.length; i < l; i++) {
@@ -1403,17 +1441,8 @@ if (enchant.gl !== undefined) {
                     rottable = [];
                     for (var j = 0, ll = indices.length; j < ll; j++) {
                         index = indices[j];
-                        postable.push(
-                            table.pos[index * 3],
-                            table.pos[index * 3 + 1],
-                            table.pos[index * 3 + 2]
-                        );
-                        rottable.push(
-                            table.rot[index * 4],
-                            table.rot[index * 4 + 1],
-                            table.rot[index * 4 + 2],
-                            table.rot[index * 4 + 3]
-                        );
+                        postable.push(table.pos[index * 3], table.pos[index * 3 + 1], table.pos[index * 3 + 2]);
+                        rottable.push(table.rot[index * 4], table.rot[index * 4 + 1], table.rot[index * 4 + 2], table.rot[index * 4 + 3]);
                     }
                     skeletontable.push({
                         pos: new Float32Array(postable),
@@ -1426,7 +1455,7 @@ if (enchant.gl !== undefined) {
              * スキニングの分割描画を行う境界を計算する.
              *
              */
-            getDivisionInfo: function(arrays, table, n) {
+            getDivisionInfo: function (arrays, table, n) {
                 var dividedPoint = [0];
                 var dividedIndices = [];
                 var indices = [];
@@ -1440,7 +1469,8 @@ if (enchant.gl !== undefined) {
                         if (num === -1) {
                             indices.push(index);
                             packedIndex = indices.length - 1;
-                        } else {
+                        }
+                        else {
                             packedIndex = num;
                         }
                         packedIndices.push(packedIndex);
@@ -1463,7 +1493,7 @@ if (enchant.gl !== undefined) {
                     boneIndices: new Uint16Array(packedIndices)
                 };
             },
-            createStaticArrayForShader: function(triangles, skin, skeleton) {
+            createStaticArrayForShader: function (triangles, skin, skeleton) {
                 var arraysForShader = {};
                 var length = 0;
                 var vectorForBones = [
@@ -1497,7 +1527,8 @@ if (enchant.gl !== undefined) {
                             boneIndices.push(skin.ids[key]);
                             if (count < 2) {
                                 weights[count].push(skin.vertex_weights[index][key]);
-                            } else {
+                            }
+                            else {
                                 break;
                             }
                         }
@@ -1512,13 +1543,15 @@ if (enchant.gl !== undefined) {
                 }
                 for (i = 0; i < 3; i++) {
                     arraysForShader['vectorFromBone' + (i + 1)] = new Float32Array(vectorForBones[i]);
-                    if (i < 2) {arraysForShader['weights' + (i + 1)] = new Float32Array(weights[i]);}
+                    if (i < 2) {
+                        arraysForShader['weights' + (i + 1)] = new Float32Array(weights[i]);
+                    }
                 }
                 arraysForShader.boneIndices = new Uint16Array(boneIndices);
                 arraysForShader.keys = keys;
                 return arraysForShader;
             },
-            _render: function(detectTouch) {
+            _render: function (detectTouch) {
                 var core = enchant.Core.instance;
                 var scene = core.currentScene3D;
                 var l = scene.directionalLight;
@@ -1562,11 +1595,11 @@ if (enchant.gl !== undefined) {
                     uAmbient: this.mesh.texture.ambient,
                     uShininess: this.mesh.texture.shininess
                 };
-
                 if (this.mesh.texture._image) {
                     u.uUseTexture = 1;
                     u.uSampler = this.mesh.texture;
-                } else {
+                }
+                else {
                     u.uUseTexture = 0;
                     u.uSampler = 0;
                 }
@@ -1650,20 +1683,19 @@ if (enchant.gl !== undefined) {
                 vNormal = normalize(uNMatrix * aVertexNormal);\n\
             }\n\
             ';
-
         enchant.gl.Core.prototype._original_start = enchant.gl.Core.prototype.start;
-        enchant.gl.Core.prototype.start = function() {
+        enchant.gl.Core.prototype.start = function () {
             enchant.gl.collada.COLLADA_SHADER_PROGRAM = new enchant.gl.Shader(COLLADA_VERTEX_SHADER_SOURCE, enchant.Core.instance.GL.defaultProgram._fShaderSource);
             this._original_start();
         };
         var ColladaLibraryLoader = enchant.Class.create({
-            initialize: function(libraryName, libraryPropertyName, className) {
+            initialize: function (libraryName, libraryPropertyName, className) {
                 this.libraryName = libraryName;
                 this.libraryPropertyName = libraryPropertyName;
                 this.className = className;
                 this.library = {};
             },
-            loadLibraryFromXML: function(colladaRootElement, url) {
+            loadLibraryFromXML: function (colladaRootElement, url) {
                 var libraries = colladaRootElement.getElementsByTagName('library_' + this.libraryName);
                 this.library = {};
                 var props = [];
@@ -1674,7 +1706,7 @@ if (enchant.gl !== undefined) {
                         }
                     }
                 }
-                var childNodes=colladaRootElement.childNodes;
+                var childNodes = colladaRootElement.childNodes;
                 if (this.libraryPropertyName === "node") {
                     props = colladaRootElement.getElementsByTagName(this.libraryPropertyName);
                 }
@@ -1682,8 +1714,8 @@ if (enchant.gl !== undefined) {
                     var child = props[i];
                     this.library[child.getAttribute('id')] = new this.className(child, url);
                     if (this.libraryPropertyName === "animation_clip") {
-                        this.library[child.getAttribute('id')].start=child.getAttribute('start');
-                        this.library[child.getAttribute('id')].end=child.getAttribute('end');
+                        this.library[child.getAttribute('id')].start = child.getAttribute('start');
+                        this.library[child.getAttribute('id')].end = child.getAttribute('end');
                     }
                 }
                 return this.library;
@@ -1692,3 +1724,4 @@ if (enchant.gl !== undefined) {
         var availableLibraryFeatures = [new ColladaLibraryLoader('images', 'image', Image), new ColladaLibraryLoader('geometries', 'geometry', Geometry), new ColladaLibraryLoader('nodes', 'node', Node), new ColladaLibraryLoader('visual_scenes', 'visual_scene', VisualScene), new ColladaLibraryLoader('materials', 'material', Material), new ColladaLibraryLoader('effects', 'effect', Effect), new ColladaLibraryLoader('controllers', 'controller', Controller), new ColladaLibraryLoader('animations', 'animation', Animation), new ColladaLibraryLoader('animation_clips', 'animation_clip', AnimationClip)];
     }());
 }
+//# sourceMappingURL=collada.gl.enchant.js.map

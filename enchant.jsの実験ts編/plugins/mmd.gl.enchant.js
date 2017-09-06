@@ -18,47 +18,40 @@
  * About MMD.js:
  * http://edv.sakura.ne.jp/mmd/
  */
-
 // for MMD.js
 var MMD = {};
-
-(function() {
-
-    var splitPath = function(path) {
+(function () {
+    var splitPath = function (path) {
         var split = path.match(/(.{0,})\/([^\/\s]{1,}\.pmd)/);
         if (split == null) {
-            split = [ '.' + path, '.', path ];
+            split = ['.' + path, '.', path];
         }
         return split;
     };
-
     /**
      * @type {Object}
      */
     enchant.gl.mmd = {};
-
-    enchant.Core._loadFuncs['pmd'] = function(src, callback) {
+    enchant.Core._loadFuncs['pmd'] = function (src, callback) {
         if (callback == null) {
-            callback = function() {
+            callback = function () {
             };
         }
-        var model = new enchant.gl.mmd.MSprite3D(src, function() {
+        var model = new enchant.gl.mmd.MSprite3D(src, function () {
             enchant.Core.instance.assets[src] = model;
             callback();
         });
     };
-
-    enchant.Core._loadFuncs['vmd'] = function(src, callback) {
+    enchant.Core._loadFuncs['vmd'] = function (src, callback) {
         if (callback == null) {
-            callback = function() {
+            callback = function () {
             };
         }
-        var anim = new enchant.gl.mmd.MAnimation(src, function() {
+        var anim = new enchant.gl.mmd.MAnimation(src, function () {
             enchant.Core.instance.assets[src] = anim;
             callback();
         });
     };
-
     /**
      * @scope enchant.gl.mmd.MMesh.prototype
      */
@@ -68,7 +61,7 @@ var MMD = {};
          * @constructs
          * @extends enchant.gl.Mesh
          */
-        initialize: function() {
+        initialize: function () {
             enchant.gl.Mesh.call(this);
             var vpos1Buffer = new enchant.gl.Buffer(enchant.gl.Buffer.VERTICES);
             var vpos2Buffer = new enchant.gl.Buffer(enchant.gl.Buffer.VERTICES);
@@ -89,13 +82,13 @@ var MMD = {};
             this._addAttribute(weightsBuffer, 'weights');
             this._addAttribute(edgesBuffer, 'edges');
         },
-        _addAttribute: function(buffer, prop) {
+        _addAttribute: function (buffer, prop) {
             this['_' + prop] = buffer;
             Object.defineProperty(this, prop, {
-                get: function() {
+                get: function () {
                     return this['_' + prop]._array;
                 },
-                set: function(array) {
+                set: function (array) {
                     this['_' + prop]._array = array;
                     if (this._appear) {
                         this['_' + prop]._bufferData();
@@ -104,14 +97,13 @@ var MMD = {};
             });
         }
     });
-
     enchant.gl.mmd.MBone = enchant.Class.create(enchant.gl.Bone, {
-        initialize: function(param) {
+        initialize: function (param) {
             var pos = vec3.create();
             var rot = quat4.identity();
             enchant.gl.Bone.call(this, param.name, param.head_pos, pos, rot);
         },
-        _applyPose: function() {
+        _applyPose: function () {
             var parent = this.parentNode;
             var local = vec3.create();
             vec3.subtract(this._origin, parent._origin, local);
@@ -121,37 +113,37 @@ var MMD = {};
             vec3.add(this._globalpos, parent._globalpos);
         }
     });
-
     enchant.gl.mmd.MSkeleton = enchant.Class.create(enchant.gl.Skeleton, {
-        initialize: function(bones) {
+        initialize: function (bones) {
             enchant.gl.Skeleton.call(this);
             this.table = [];
             if (bones) {
                 this.load(bones);
             }
         },
-        load: function(bones) {
+        load: function (bones) {
             var bone;
             for (var i = 0, l = bones.length; i < l; i++) {
                 bone = bones[i];
                 this._add(bone);
             }
         },
-        _add: function(param) {
+        _add: function (param) {
             var bone = new enchant.gl.mmd.MBone(param);
             this.table.push(bone);
             if (param.parent_bone_index === 0xFFFF) {
                 this.addChild(bone);
-            } else {
+            }
+            else {
                 this.table[param.parent_bone_index].addChild(bone);
             }
             if (param.name.match(/ひざ/)) {
-                bone.constraint = function(q) {
-                    return quat4.set([ Math.sqrt(1 - q[3] * q[3]), 0, 0, q[3] ], q);
+                bone.constraint = function (q) {
+                    return quat4.set([Math.sqrt(1 - q[3] * q[3]), 0, 0, q[3]], q);
                 };
             }
         },
-        _addIK: function(data) {
+        _addIK: function (data) {
             var bones = [];
             var effector = this.table[data.bone_index];
             var target = this.table[data.target_bone_index];
@@ -163,7 +155,6 @@ var MMD = {};
             this.addIKControl(effector, target, bones, maxangle, iteration);
         }
     });
-
     /**
      * @scope enchant.gl.mmd.MSprite3D.prototype
      */
@@ -173,28 +164,24 @@ var MMD = {};
          * @constructs
          * @extends enchant.gl.Sprite3D
          */
-        initialize: function(path, callback) {
+        initialize: function (path, callback) {
             enchant.gl.Sprite3D.call(this);
             this.program = enchant.gl.mmd.MMD_SHADER_PROGRAM;
             this.animation = [];
             this.uMVMatrix = mat4.create();
             this.uNMatrix = mat4.create();
-
-            this.addEventListener('enterframe', function() {
+            this.addEventListener('enterframe', function () {
                 var first;
                 var skeleton = this.skeleton;
                 var morph = this.morph;
                 if (this.animation.length === 0) {
-                } else {
+                }
+                else {
                     first = this.animation[0];
-
                     var data = first.animation._tick(first.frame);
                     first.frame++;
-
                     this._skinning(data.poses);
-
                     this._morphing(data.morphs);
-
                     if (first.frame > first.animation.length) {
                         first = this.animation.shift();
                         if (this.loop) {
@@ -213,24 +200,23 @@ var MMD = {};
          * Animation will be played in the order that it is added.
          * @param {enchant.gl.mmd.MAnimation} animation
          */
-        pushAnimation: function(animation) {
+        pushAnimation: function (animation) {
             this.animation.push({ frame: 0, animation: animation });
         },
         /**
          * Delete added animation.
          */
-        clearAnimation: function(animation) {
+        clearAnimation: function (animation) {
             this.animation = [];
         },
-        _skinning: function(poses) {
+        _skinning: function (poses) {
             var skeleton = this.skeleton;
             skeleton.setPoses(poses);
             skeleton.solveFKs();
             skeleton.solveIKs();
             this._applySkeleton();
-
         },
-        _morphing: function(morphs) {
+        _morphing: function (morphs) {
             var target = this.mesh.morphs;
             for (var i = 0, l = target.length; i < l; i++) {
                 target[i] = 0;
@@ -238,11 +224,11 @@ var MMD = {};
             this.morph.morphing(morphs, target);
             this.mesh._morphs._bufferDataFast();
         },
-        _render: function() {
+        _render: function () {
             var core = enchant.Core.instance;
             var scene = core.currentScene3D;
             var light = scene.directionalLight;
-            var lvec = [ light._directionX, light._directionY, light._directionZ ];
+            var lvec = [light._directionX, light._directionY, light._directionZ];
             var uMVMatrix = mat4.identity(this.uMVMatrix);
             mat4.multiply(scene._camera.mat, this.tmpMat, uMVMatrix);
             var uNMatrix = mat4.identity(this.uNMatrix);
@@ -290,22 +276,21 @@ var MMD = {};
                         u.uUseTexture = 0;
                         u.uUseSphereMapAdditive = 0;
                         u.uSphereMap = material.texture;
-                    } else {
+                    }
+                    else {
                         u.uUseSphereMap = 0;
                         u.uUseTexture = 1;
                         u.uTexture = material.texture;
                     }
-                } else {
+                }
+                else {
                     u.uUseTexture = 0;
                     u.uTexture = 0;
                     u.uUseSphereMap = 0;
                 }
                 core.GL.currentProgram.setUniforms(u);
-
-
                 length = material.face_vert_count;
                 enchant.Core.instance.GL.renderElements(this.mesh._indices, offset * 2, length);
-
                 if (material.edge_flag) {
                     enchant.gl.mmd.MMD_SHADER_PROGRAM.setUniforms({ uEdge: 1 });
                     gl.cullFace(gl.FRONT);
@@ -313,7 +298,6 @@ var MMD = {};
                     gl.cullFace(gl.BACK);
                     enchant.gl.mmd.MMD_SHADER_PROGRAM.setUniforms({ uEdge: 0 });
                 }
-
                 offset += material.face_vert_count;
             }
         },
@@ -328,34 +312,33 @@ var MMD = {};
          *     scene.addChild(mk);
          * });
          */
-        loadPmd: function(path, callback) {
+        loadPmd: function (path, callback) {
             var split = splitPath(path);
             var model = new MMD.Model(split[1], split[2]);
             var that = this;
             this._data = model;
-            model.load(function() {
+            model.load(function () {
                 return that._parse(model, callback);
             });
         },
-        set: function(sp) {
+        set: function (sp) {
             this._parse(sp._data);
             this._data = sp._data;
         },
-        clone: function() {
+        clone: function () {
             var sp = new enchant.gl.mmd.MSprite3D();
             sp._parse(this._data);
             sp._data = this._data;
             return sp;
         },
-        _parse: function(model, callback) {
+        _parse: function (model, callback) {
             if (typeof callback !== 'function') {
-                callback = function() {
+                callback = function () {
                 };
             }
             var data;
             var original;
-            var params = [ 'ambient', 'diffuse', 'specular', 'shininess', 'alpha', 'face_vert_count', 'edge_flag' ];
-
+            var params = ['ambient', 'diffuse', 'specular', 'shininess', 'alpha', 'face_vert_count', 'edge_flag'];
             var mesh = new enchant.gl.mmd.MMesh();
             var length = model.vertices.length;
             var v;
@@ -385,24 +368,22 @@ var MMD = {};
                 b2 = model.bones[v.bone_num2];
                 bindex1[i] = v.bone_num1;
                 bindex2[i] = v.bone_num2;
-                tmp.set([ v.x, v.y, v.z ]);
+                tmp.set([v.x, v.y, v.z]);
                 vertices.set(tmp, i * 3);
                 vec3.subtract(tmp, b1.head_pos, tmp2);
                 vpos1.set(tmp2, i * 3);
                 vec3.subtract(tmp, b2.head_pos, tmp2);
                 vpos2.set(tmp2, i * 3);
-                normals.set([ v.nx, v.ny, v.nz ], i * 3);
-                texCoords.set([ v.u, v.v ], i * 2);
+                normals.set([v.nx, v.ny, v.nz], i * 3);
+                texCoords.set([v.u, v.v], i * 2);
                 bone1pos.set(b1.head_pos, i * 3);
                 bone2pos.set(b2.head_pos, i * 3);
-                quats1.set([ 0, 0, 0, 1 ], i * 4);
-                quats2.set([ 0, 0, 0, 1 ], i * 4);
-                morphs.set([ 0, 0, 0 ], i * 3);
+                quats1.set([0, 0, 0, 1], i * 4);
+                quats2.set([0, 0, 0, 1], i * 4);
+                morphs.set([0, 0, 0], i * 3);
                 weights[i] = v.bone_weight;
                 edges[i] = 1 - v.edge_flag;
             }
-
-
             mesh.vertices = vertices;
             mesh.normals = normals;
             mesh.texCoords = texCoords;
@@ -419,20 +400,15 @@ var MMD = {};
             mesh.colors = new Float32Array(length * 4);
             mesh.bindex1 = bindex1;
             mesh.bindex2 = bindex2;
-
             this.mesh = mesh;
-
             this.mesh.materials = [];
-
             this.skeleton = new enchant.gl.mmd.MSkeleton(model.bones);
             var l;
             for (i = 0, l = model.iks.length; i < l; i++) {
                 data = model.iks[i];
                 this.skeleton._addIK(data);
             }
-
             this.morph = new enchant.gl.mmd.MMorph(model.morphs);
-
             for (i = 0, l = model.materials.length; i < l; i++) {
                 original = model.materials[i];
                 material = this.mesh.materials[i] = {};
@@ -440,16 +416,15 @@ var MMD = {};
                     material[params[prop]] = original[params[prop]];
                 }
                 if (typeof model.toon_file_names[i] !== 'undefined') {
-                    material.toon = new enchant.gl.Texture(model.directory + '/' + model.toon_file_names[original.toon_index], {flipY: false});
+                    material.toon = new enchant.gl.Texture(model.directory + '/' + model.toon_file_names[original.toon_index], { flipY: false });
                 }
                 if (original.texture_file_name) {
                     material.texture = new enchant.gl.Texture(model.directory + '/' + original.texture_file_name);
                 }
             }
-
             callback(this);
         },
-        _applySkeleton: function() {
+        _applySkeleton: function () {
             var sk = this.skeleton;
             var mesh = this.mesh;
             var b1pos, b2pos, b1rot, b2rot;
@@ -460,14 +435,12 @@ var MMD = {};
                 b2pos = sk.table[mesh.bindex2[i]]._globalpos;
                 b1rot = sk.table[mesh.bindex1[i]]._globalrot;
                 b2rot = sk.table[mesh.bindex2[i]]._globalrot;
-
                 mesh._bone1pos._array[i3 + 0] = b1pos[0];
                 mesh._bone1pos._array[i3 + 1] = b1pos[1];
                 mesh._bone1pos._array[i3 + 2] = b1pos[2];
                 mesh._bone2pos._array[i3 + 0] = b2pos[0];
                 mesh._bone2pos._array[i3 + 1] = b2pos[1];
                 mesh._bone2pos._array[i3 + 2] = b2pos[2];
-
                 mesh._quats1._array[i4 + 0] = b1rot[0];
                 mesh._quats1._array[i4 + 1] = b1rot[1];
                 mesh._quats1._array[i4 + 2] = b1rot[2];
@@ -476,7 +449,6 @@ var MMD = {};
                 mesh._quats2._array[i4 + 1] = b2rot[1];
                 mesh._quats2._array[i4 + 2] = b2rot[2];
                 mesh._quats2._array[i4 + 3] = b2rot[3];
-
                 i3 += 3;
                 i4 += 4;
             }
@@ -486,21 +458,19 @@ var MMD = {};
             mesh._quats2._bufferDataFast();
         }
     });
-
-
     enchant.gl.mmd.MPose = enchant.Class.create(enchant.gl.Pose, {
-        initialize: function(param) {
+        initialize: function (param) {
             enchant.gl.Pose.call(this, param.location, param.rotation);
             this._interpolation = param.interpolation;
         },
-        _internalInterpole: function(i, x) {
+        _internalInterpole: function (i, x) {
             var x1 = this._interpolation[0 + i] / 127;
             var y1 = this._interpolation[4 + i] / 127;
             var x2 = this._interpolation[8 + i] / 127;
             var y2 = this._interpolation[12 + i] / 127;
             return this._bezierp(x1, y1, x2, y2, x);
         },
-        getInterpolation: function(another, ratio) {
+        getInterpolation: function (another, ratio) {
             var v = vec3.create();
             var q = quat4.create();
             var xt = this._internalInterpole(0, ratio);
@@ -515,16 +485,15 @@ var MMD = {};
             return new enchant.gl.Pose(loc, rot);
         }
     });
-
     enchant.gl.mmd.MMorph = enchant.Class.create({
-        initialize: function(data) {
+        initialize: function (data) {
             this._base = {};
             this._morphs = {};
             if (typeof data !== 'undefined') {
                 this._load(data);
             }
         },
-        _load: function(data) {
+        _load: function (data) {
             this._base = data.slice(0, 1)[0];
             var m, name, vert, morph;
             for (var i = 1, l = data.length; i < l; i++) {
@@ -542,7 +511,7 @@ var MMD = {};
                 }
             }
         },
-        morphing: function(data, target) {
+        morphing: function (data, target) {
             var weight, index;
             for (var prop in data) {
                 weight = data[prop]._weight;
@@ -551,7 +520,7 @@ var MMD = {};
                 }
             }
         },
-        _morphing: function(name, target, weight) {
+        _morphing: function (name, target, weight) {
             var set = this._morphs[name];
             var index;
             for (var i = 0, l = set.index.length; i < l; i++) {
@@ -562,22 +531,19 @@ var MMD = {};
             }
         }
     });
-
     enchant.gl.mmd.MMorphPoint = enchant.Class.create({
-        initialize: function(weight) {
+        initialize: function (weight) {
             this._weight = weight;
         },
-        getInterpolation: function(another, ratio) {
+        getInterpolation: function (another, ratio) {
             return new enchant.gl.mmd.MMorphPoint(lerp(this._weight, another._weight, ratio));
         }
     });
-
     enchant.gl.mmd.MKeyFrameManager = enchant.Class.create(enchant.gl.KeyFrameManager, {
-        initialize: function() {
+        initialize: function () {
             enchant.gl.KeyFrameManager.call(this);
         }
     });
-
     /**
      * @scope enchant.gl.mmd.MAnimation.prototype
      */
@@ -592,7 +558,7 @@ var MMD = {};
          * @extends enchant.gl.Sprite3D
          * @see enchant.gl.mmd.MAnimation#loadVmd
          */
-        initialize: function(path, callback) {
+        initialize: function (path, callback) {
             this.length = -1;
             if (arguments.length === 2) {
                 this.loadVmd(path, callback);
@@ -609,18 +575,18 @@ var MMD = {};
          *     mk.pushAnimation(dance);
          * });
          */
-        loadVmd: function(path, callback) {
+        loadVmd: function (path, callback) {
             var motion = new MMD.Motion(path);
             var frame;
             var that = this;
-            motion.load(function() {
+            motion.load(function () {
                 that.motions = parseMotion(motion.bone);
                 that.morphs = parseMorph(motion.morph);
                 that._calcLength();
                 callback(that);
             });
         },
-        bake: function() {
+        bake: function () {
             var prop, manager;
             for (prop in this.morphs) {
                 manager = this.morphs[prop];
@@ -635,7 +601,7 @@ var MMD = {};
                 }
             }
         },
-        _tick: function(frame) {
+        _tick: function (frame) {
             var poses = this._getFrame(this.motions, frame);
             var morphs = this._getFrame(this.morphs, frame);
             return {
@@ -643,14 +609,14 @@ var MMD = {};
                 morphs: morphs
             };
         },
-        _getFrame: function(data, frame) {
+        _getFrame: function (data, frame) {
             var ret = {};
             for (var prop in data) {
                 ret[prop] = data[prop].getFrame(frame);
             }
             return ret;
         },
-        _calcLength: function() {
+        _calcLength: function () {
             var data, deta;
             for (var prop in this) {
                 data = this[prop];
@@ -667,8 +633,7 @@ var MMD = {};
             }
         }
     });
-
-    var parseMorph = function(data) {
+    var parseMorph = function (data) {
         var morphs = {};
         var morph, name, frame, weight;
         for (var i = 0, l = data.length; i < l; i++) {
@@ -686,8 +651,7 @@ var MMD = {};
         }
         return morphs;
     };
-
-    var parseMotion = function(data) {
+    var parseMotion = function (data) {
         var motions = {};
         var bone, name, frame;
         for (var i = 0, l = data.length; i < l; i++) {
@@ -704,7 +668,6 @@ var MMD = {};
         }
         return motions;
     };
-
     var bufferProto = Object.getPrototypeOf(enchant.gl.Buffer);
     bufferProto.MORPHS = bufferProto.NORMALS;
     bufferProto.QUATS = bufferProto.COLORS;
@@ -726,9 +689,8 @@ var MMD = {};
         btype: 34962,
         Atype: Uint16Array
     };
-
     var _original_start = enchant.gl.Core.prototype.start;
-    enchant.gl.Core.prototype.start = function() {
+    enchant.gl.Core.prototype.start = function () {
         enchant.gl.mmd.MMD_SHADER_PROGRAM = new enchant.gl.Shader(MMD_VERTEX_SHADER_SOURCE, MMD_FRAGMENT_SHADER_SOURCE);
         this.GL.setProgram(enchant.gl.mmd.MMD_SHADER_PROGRAM);
         enchant.gl.mmd.MMD_SHADER_PROGRAM.setUniforms({
@@ -738,25 +700,23 @@ var MMD = {};
                 0, 0, 1, 0,
                 0, 0, 0, 1
             ],
-            uLightColor: [ 0.6, 0.6, 0.6 ],
+            uLightColor: [0.6, 0.6, 0.6],
             uSelfShadow: 0,
             uShadowMap: 0,
             uGenerateShadowMap: 0,
             uCenterPoint: 0,
             uAxis: 0,
-            uAxisColor: [ 1, 0, 1 ],
+            uAxisColor: [1, 0, 1],
             uEdge: 0,
-            uEdgeColor: [ 0, 0, 0 ],
+            uEdgeColor: [0, 0, 0],
             uEdgeThickness: 0.004
         });
         this.GL.setDefaultProgram();
         _original_start.call(this);
     };
-
-    var lerp = function(n1, n2, r) {
+    var lerp = function (n1, n2, r) {
         return n1 + r * (n2 - n1);
     };
-
     var MMD_VERTEX_SHADER_SOURCE = '\n\
         uniform mat4 uMVMatrix;\n\
         uniform mat4 uPMatrix;\n\
@@ -850,7 +810,6 @@ var MMD = {};
             }\n\
         }\n\
     ';
-
     var MMD_FRAGMENT_SHADER_SOURCE = '\n\
         #ifdef GL_ES\n\
             precision highp float;\n\
@@ -982,3 +941,4 @@ var MMD = {};
         }\n\
     ';
 }());
+//# sourceMappingURL=mmd.gl.enchant.js.map

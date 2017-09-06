@@ -8,9 +8,7 @@
  * @description
  * Library for making mobile webpage-style UIs in enchant.js.
  */
-
-(function() {
-
+(function () {
     /**
      * @type {Object}
      */
@@ -44,32 +42,35 @@
             DBLLIMIT: 300,
             FLINGVEL: 3
         },
-
         /**
          * Return objects that cannot be displayed as units in string or enchant.Surface in displayable form.
          * @param {*} content Data you wish to display.
          * @return {*} enchant Entity object.
          */
-        parseContent: function(content, font, color) {
+        parseContent: function (content, font, color) {
             var en;
             if (typeof content === 'undefined') {
                 content = '';
             }
             if (typeof content === 'number') {
                 content = arguments.callee('' + content, font);
-            } else if (content instanceof enchant.Entity) {
-            } else if (content instanceof enchant.Surface) {
+            }
+            else if (content instanceof enchant.Entity) {
+            }
+            else if (content instanceof enchant.Surface) {
                 en = new enchant.Sprite(content.width, content.height);
                 en.image = content;
                 content = en;
-            } else if (typeof content == 'string') {
+            }
+            else if (typeof content == 'string') {
                 calced = getElementMetrics(content, font);
                 en = new enchant.Label(content);
                 en.width = calced.width;
                 en.height = calced.height;
                 if (font) {
                     en.font = font;
-                } else {
+                }
+                else {
                     en.font = enchant.widget._env.font;
                 }
                 if (color) {
@@ -80,96 +81,82 @@
             return content;
         }
     };
-
     /**
      * Events occurring during Scene beginning.
      * Issued when ended {@link enchant.Core#transitionPush} animation.
      * @type {String}
      */
     enchant.Event.TRANSITIONENTER = 'transitionenter';
-
     /**
      * Events occurring during Scene end.
      * Issued when ended {@link enchant.Core#transitionPop} animation.
      * @type {String}
      */
     enchant.Event.TRANSITIONEXIT = 'transitionexit';
-
     /**
      * Event issued when positive button in enchant.widget.Confirm is pushed.
      * @type {String}
      */
     enchant.Event.ACCEPT = 'accept';
-
     /**
      * Event issued when negative button in enchant.widget.Confirm is pushed.
      * @type {String}
      */
     enchant.Event.CANCEL = 'cancel';
-
     /**
      * Event issued when form object content is changed.
      * @type {String}
      */
     enchant.Event.CHANGE = 'change';
-
     /**
      * Event issued when tap is detected.
      * Detected when touch ends without movement, and when double touch has ended.
      * @type {String}
      */
     enchant.Event.TAP = 'tap';
-
     /**
      * Event issued when double tap is detected.
      * Detected when two taps are detected within a set time and distance.
      * @type {String}
      */
     enchant.Event.DOUBLETAP = 'doubletap';
-
     /**
      * Event issued when hold is detected.
      * Detected when touch continues for a set time without movement.
      * @type {String}
      */
     enchant.Event.HOLD = 'hold';
-
     /**
      * Event issued when drag is detected.
      * Detected when touch position changes during hold.
      * @type {String}
      */
     enchant.Event.DRAG = 'drag';
-
     /**
      * Event issued when release is detected.
      * Detected when touch ends during hold.
      * @type {String}
      */
     enchant.Event.RELEASE = 'release';
-
     /**
      * Event issued when slip is detected.
      * Detected when touch position changes without holding.
      * @type {String}
      */
     enchant.Event.SLIP = 'slip';
-
     /**
      * Event issued when fling is detected.
      * Detected when touch ends and position moves faster than set speed.
      * @type {String}
      */
     enchant.Event.FLING = 'fling';
-
     var NOTOUCH = 0;
     var WAITDBL = 1;
     var NOMOVE = 2;
     var NOMOVEDBL = 3;
     var MOVED = 4;
     var HOLD = 5;
-
-    var getElementMetrics = function(string, font) {
+    var getElementMetrics = function (string, font) {
         var e = document.createElement('div');
         var cvs = document.createElement('canvas');
         var ctx = cvs.getContext('2d');
@@ -191,46 +178,39 @@
                 width = w;
             }
         }
-
         e.innerHTML = string;
-
         if (document.body) {
             document.body.appendChild(e);
             height = parseInt(getComputedStyle(e).height, 10);
             e.style.position = 'absolute';
             width = parseInt(getComputedStyle(e).width, 10);
             document.body.removeChild(e);
-        } else {
+        }
+        else {
             height = 14 * arr.length;
         }
-
         return {
             width: width + 1,
             height: height + 1
         };
     };
-
-    var calcLeastPosition = function(margin) {
+    var calcLeastPosition = function (margin) {
         margin |= 0;
         return margin;
     };
-
-    var calcMostPosition = function(child, parent, margin) {
+    var calcMostPosition = function (child, parent, margin) {
         margin |= 0;
         return parent - margin - child;
     };
-
-    var calcCenteredPosition = function(child, parent) {
+    var calcCenteredPosition = function (child, parent) {
         return ~~(parent / 2) - ~~(child / 2);
     };
-
-    var getScaleOffest = function(length, scale) {
+    var getScaleOffest = function (length, scale) {
         var half = ~~(length / 2);
         scale = scale || 1;
         return half - ~~(half * scale);
     };
-
-    var distribute = function(value, div) {
+    var distribute = function (value, div) {
         if (typeof div == 'array') {
             var ratio = div;
             var ret = new Array(ratio.length);
@@ -239,12 +219,10 @@
             var max = 0;
             var sum = 0;
             var quo;
-
-            ratio.forEach(function(n) {
+            ratio.forEach(function (n) {
                 sum += n;
             });
             quo = value / sum;
-
             for (var i = 0, l = ret.length; i < l; i++) {
                 ret[i] = Math.round(quo * ratio[i]);
                 if (ratio[i] < max) {
@@ -252,13 +230,12 @@
                     max = ratio[i];
                 }
             }
-
-            ret.forEach(function(n) {
+            ret.forEach(function (n) {
                 retSum += n;
             });
-
             ret[maxi] += value - retSum;
-        } else if (typeof div == 'number') {
+        }
+        else if (typeof div == 'number') {
             var ret = new Array(div);
             var quo = ~~(value / div);
             var rem = ~~(value % div);
@@ -271,60 +248,56 @@
         }
         return ret;
     };
-
     var Adjust = {
-        fitToX: function(parent, margin) {
+        fitToX: function (parent, margin) {
             var l = parent.width;
-            var s = Math.min(
-                (l - margin * 2) / this.width,
-                (l - margin * 2) / this.height
-            );
+            var s = Math.min((l - margin * 2) / this.width, (l - margin * 2) / this.height);
             if (this instanceof enchant.Sprite) {
                 this.scaleX = s;
                 this.scaleY = s;
-            } else {
+            }
+            else {
                 this.width = ~~(this.width * s);
                 this.height = ~~(this.height * s);
             }
         },
-        fitToY: function(parent, margin) {
+        fitToY: function (parent, margin) {
             var l = parent.height;
-            var s = Math.min(
-                (l - margin * 2) / this.width,
-                (l - margin * 2) / this.height
-            );
+            var s = Math.min((l - margin * 2) / this.width, (l - margin * 2) / this.height);
             if (this instanceof enchant.Sprite) {
                 this.scaleX = s;
                 this.scaleY = s;
-            } else {
+            }
+            else {
                 this.width = ~~(this.width * s);
                 this.height = ~~(this.height * s);
             }
         },
-        fillX: function(parent, margin) {
+        fillX: function (parent, margin) {
             var s = (parent.width - margin * 2) / this.width;
             if (this instanceof enchant.Sprite) {
                 this.scaleX = s;
                 this.scaleY = s;
-            } else {
+            }
+            else {
                 this.width = ~~(this.width * s);
                 this.height = ~~(this.height * s);
             }
         },
-        fillY: function(parent, margin) {
+        fillY: function (parent, margin) {
             var s = (parent.height - margin * 2) / this.height;
             if (this instanceof enchant.Sprite) {
                 this.scaleX = s;
                 this.scaleY = s;
-            } else {
+            }
+            else {
                 this.width = ~~(this.width * s);
                 this.height = ~~(this.height * s);
             }
         }
     };
-
     var Effect = {
-        transitForwardIn: function(time) {
+        transitForwardIn: function (time) {
             var core = enchant.Core.instance;
             var child;
             this.x = core.width;
@@ -336,25 +309,25 @@
             this.tl
                 .moveTo(0, 0, time, enchant.Easing.QUAD_EASEINOUT);
         },
-        transitForwardOut: function(time) {
+        transitForwardOut: function (time) {
             var core = enchant.Core.instance;
             this.x = 0;
             this.tl
                 .moveTo(-core.width, 0, time, enchant.Easing.QUAD_EASEINOUT);
         },
-        transitBackIn: function(time) {
+        transitBackIn: function (time) {
             var core = enchant.Core.instance;
             this.x = -core.width;
             this.tl
                 .moveTo(0, 0, time, enchant.Easing.QUAD_EASEINOUT);
         },
-        transitBackOut: function(time) {
+        transitBackOut: function (time) {
             var core = enchant.Core.instance;
             this.x = 0;
             this.tl
                 .moveTo(core.width, 0, time, enchant.Easing.QUAD_EASEINOUT);
         },
-        popup: function() {
+        popup: function () {
             this.scaleX = 0.1;
             this.scaleY = 0.1;
             this.opacity = 0.1;
@@ -363,13 +336,13 @@
                 .and()
                 .scaleTo(1, 3, enchant.Easing.BOUNCE_EASEOUT);
         },
-        popdown: function() {
+        popdown: function () {
             this.tl
                 .fadeTo(0.1, 3, enchant.Easing.QUAD_EASEOUT)
                 .and()
                 .scaleTo(0.1, 3, enchant.Easing.BOUNCE_EASEOUT);
         },
-        resizeTo: function(width, height, time, easing) {
+        resizeTo: function (width, height, time, easing) {
             return this.tl.tween({
                 width: width,
                 height: height,
@@ -378,20 +351,17 @@
             });
         }
     };
-
     var Align = {
-
         /**
          * @scope enchant.Entity
          */
-
         /**
          * Moves to left side of specified object.
          * @param {*} another Object that becomes standard.
          * @param {Number} margin Number of pixels shifted.
          * @requires widget.enchant.js
          */
-        alignLeftOf: function(another, margin) {
+        alignLeftOf: function (another, margin) {
             margin |= 0;
             var anotherScaleOffset = getScaleOffest(another.width, another.scaleX);
             var scaleOffset = getScaleOffest(this.width, this.scaleX);
@@ -404,7 +374,7 @@
          * @param {Number} margin Number of pixels shifted.
          * @requires widget.enchant.js
          */
-        alignRightOf: function(another, margin) {
+        alignRightOf: function (another, margin) {
             margin |= 0;
             var anotherScaleOffset = getScaleOffest(another.width, another.scaleX);
             var scaleOffset = getScaleOffest(this.width, this.scaleX);
@@ -417,7 +387,7 @@
          * @param {Number} margin Number of pixels shifted.
          * @requires widget.enchant.js
          */
-        alignTopOf: function(another, margin) {
+        alignTopOf: function (another, margin) {
             margin |= 0;
             var anotherScaleOffset = getScaleOffest(another.height, another.scaleY);
             var scaleOffset = getScaleOffest(this.height, this.scaleY);
@@ -430,7 +400,7 @@
          * @param {Number} margin Number of pixels shifted.
          * @requires widget.enchant.js
          */
-        alignBottomOf: function(another, margin) {
+        alignBottomOf: function (another, margin) {
             margin |= 0;
             var anotherScaleOffset = getScaleOffest(another.height, another.scaleY);
             var scaleOffset = getScaleOffest(this.height, this.scaleY);
@@ -443,7 +413,7 @@
          * @param {Number} margin Number of pixels shifted.
          * @requires widget.enchant.js
          */
-        alignLeftIn: function(another, margin) {
+        alignLeftIn: function (another, margin) {
             var scaleOffset = getScaleOffest(this.width, this.scaleX);
             this.x = calcLeastPosition(margin) - scaleOffset;
             return this;
@@ -454,7 +424,7 @@
          * @param {Number} margin Number of pixels shifted.
          * @requires widget.enchant.js
          */
-        alignRightIn: function(another, margin) {
+        alignRightIn: function (another, margin) {
             var scaleOffset = getScaleOffest(this.width, this.scaleX);
             this.x = calcMostPosition(this.width, another.width, margin) + scaleOffset;
             return this;
@@ -465,7 +435,7 @@
          * @param {Number} margin Number of pixels shifted.
          * @requires widget.enchant.js
          */
-        alignTopIn: function(another, margin) {
+        alignTopIn: function (another, margin) {
             var scaleOffset = getScaleOffest(this.height, this.scaleY);
             this.y = calcLeastPosition(margin) - scaleOffset;
             return this;
@@ -476,7 +446,7 @@
          * @param {Number} margin Number of pixels shifted.
          * @requires widget.enchant.js
          */
-        alignBottomIn: function(another, margin) {
+        alignBottomIn: function (another, margin) {
             var scaleOffset = getScaleOffest(this.height, this.scaleY);
             this.y = calcMostPosition(this.height, another.height, margin) + scaleOffset;
             return this;
@@ -487,7 +457,7 @@
          * @param {Number} margin Number of pixels shifted.
          * @requires widget.enchant.js
          */
-        alignHorizontalCenterIn: function(another) {
+        alignHorizontalCenterIn: function (another) {
             this.x = calcCenteredPosition(this.width, another.width);
             return this;
         },
@@ -497,37 +467,34 @@
          * @param {Number} margin Number of pictures shifted.
          * @requires widget.enchant.js
          */
-        alignVerticalCenterIn: function(another) {
+        alignVerticalCenterIn: function (another) {
             this.y = calcCenteredPosition(this.height, another.height);
             return this;
         }
     };
-
     for (var prop in Align) {
         enchant.Entity.prototype[prop] = Align[prop];
     }
-
     var _transitionLock = false;
-
     /**
      * @scope enchant.Core
      */
-
     /**
      * Perform pushScene with transition animation.
      * @param {enchant.Scene} inScene New scene transitioned to.
      * @return {enchant.Scene} New scene
      * @requires widget.enchant.js
      */
-    enchant.Core.prototype.transitionPush = function(inScene) {
-        if (_transitionLock) return null;
+    enchant.Core.prototype.transitionPush = function (inScene) {
+        if (_transitionLock)
+            return null;
         _transitionLock = true;
         var time = 15;
         var c = 0;
         var outScene = this.currentScene;
         Effect.transitForwardIn.call(inScene, time);
         Effect.transitForwardOut.call(outScene, time);
-        this.addEventListener(enchant.Event.ENTER_FRAME, function(e) {
+        this.addEventListener(enchant.Event.ENTER_FRAME, function (e) {
             outScene.dispatchEvent(e);
             if (c > time) {
                 _transitionLock = false;
@@ -539,21 +506,22 @@
         });
         return this.pushScene(inScene);
     };
-
     /**
      * Perform popScene with transition animation.
      * @return {enchant.Scene} Finished scene.
      * @requires widget.enchant.js
      */
-    enchant.Core.prototype.transitionPop = function() {
-        if (_transitionLock) return null;
-        if (this.currentScene == this.rootScene) return null;
+    enchant.Core.prototype.transitionPop = function () {
+        if (_transitionLock)
+            return null;
+        if (this.currentScene == this.rootScene)
+            return null;
         _transitionLock = true;
         var time = 15;
         var c = 0;
         var outScene = this.currentScene;
         var inScene = this._scenes[this._scenes.length - 2];
-        this.addEventListener(enchant.Event.ENTER_FRAME, function(e) {
+        this.addEventListener(enchant.Event.ENTER_FRAME, function (e) {
             inScene.dispatchEvent(e);
             if (c > time) {
                 _transitionLock = false;
@@ -568,7 +536,6 @@
         Effect.transitBackOut.call(outScene, time);
         return this._scenes[this._scenes.length - 1];
     };
-
     /**
      * @scope enchant.widget.GestureDetector
      */
@@ -580,7 +547,7 @@
          * @constructs
          * @extends enchant.EventTarget
          */
-        initialize: function(target) {
+        initialize: function (target) {
             var core = enchant.Core.instance;
             enchant.EventTarget.call(this);
             this._target;
@@ -592,47 +559,45 @@
             this._releaseElapsed = 0;
             this._state = NOTOUCH;
             this._velobase = (core.width > core.height) ? core.height : core.width;
-
             var detector = this;
-            this._handler = function(e) {
+            this._handler = function (e) {
                 detector.dispatchEvent(e);
             };
-
             this._types = [
                 enchant.Event.TOUCH_START,
                 enchant.Event.TOUCH_MOVE,
                 enchant.Event.TOUCH_END,
                 enchant.Event.ENTER_FRAME
             ];
-
             if (target) {
                 this.attach(target);
             }
         },
-        attach: function(target) {
+        attach: function (target) {
             this._target = target;
-            this._types.forEach(function(event) {
+            this._types.forEach(function (event) {
                 this._target.addEventListener(event, this._handler);
             }, this);
         },
-        detach: function() {
-            this._types.forEach(function(event) {
+        detach: function () {
+            this._types.forEach(function (event) {
                 this._target.removeEventListener(event, this._handler);
             }, this);
             this._target = null;
         },
-        ontouchstart: function(e) {
+        ontouchstart: function (e) {
             var core = enchant.Core.instance;
             this._startFrame = core.frame;
             this._startX = this._lastX = e.x;
             this._startY = this._lastY = e.y;
             if (this._state == WAITDBL) {
                 this._state = NOMOVEDBL;
-            } else if (this._state == NOTOUCH) {
+            }
+            else if (this._state == NOTOUCH) {
                 this._state = NOMOVE;
             }
         },
-        ontouchmove: function(e) {
+        ontouchmove: function (e) {
             var dx = e.x - this._lastX;
             var dy = e.y - this._lastY;
             this._lastX = e.x;
@@ -661,7 +626,7 @@
                     break;
             }
         },
-        ontouchend: function(e) {
+        ontouchend: function (e) {
             var core = enchant.Core.instance;
             switch (this._state) {
                 case MOVED:
@@ -705,7 +670,7 @@
             this._startX = 0;
             this._startY = 0;
         },
-        onenterframe: function(e) {
+        onenterframe: function (e) {
             var elapsed = e.elapsed;
             switch (this._state) {
                 case WAITDBL:
@@ -759,7 +724,6 @@
         enchant.Event.SLIP,
         enchant.Event.FLING
     ];
-
     /**
      * @scope enchant.widget.Ninepatch
      */
@@ -772,9 +736,8 @@
          * @constructs
          * @extends enchant.Surface
          */
-        initialize: function(width, height) {
+        initialize: function (width, height) {
             enchant.Surface.call(this, width, height);
-
             this._horScStore = [];
             this._horNoScStore = [];
             this._verScStore = [];
@@ -786,10 +749,10 @@
          * @type {enchant.Surface}
          */
         src: {
-            get: function() {
+            get: function () {
                 return this._src;
             },
-            set: function(surface) {
+            set: function (surface) {
                 if (surface == this._src || !(surface instanceof enchant.Surface)) {
                     return;
                 }
@@ -797,7 +760,7 @@
                 this._src = surface;
             }
         },
-        _detect: function(img) {
+        _detect: function (img) {
             this._horScStore = [];
             this._horNoScStore = [];
             this._verScStore = [];
@@ -809,16 +772,13 @@
             var ctx = cvs.getContext('2d');
             ctx.drawImage(elem, 0, 0, width, height);
             var pixels = ctx.getImageData(0, 0, width, height);
-
-            var isBlack = function(i) {
+            var isBlack = function (i) {
                 return pixels.data[i] == 0 && pixels.data[i + 1] == 0 && pixels.data[i + 2] == 0 && pixels.data[i + 3] == 255;
             };
-
             var last = false;
             var tmp = [];
             var scalable = [];
             var noscalable = [];
-
             for (var i = 1, l = width - 1; i < l; i++) {
                 last = isBlack(i * 4);
                 if (last) {
@@ -830,7 +790,8 @@
                         this._horNoScStore.push(noscalable);
                         noscalable = [];
                     }
-                } else {
+                }
+                else {
                     if (noscalable.length == 0) {
                         noscalable.push(i);
                     }
@@ -851,7 +812,6 @@
             }
             scalable = [];
             noscalable = [];
-
             for (var i = 1, l = height - 1; i < l; i++) {
                 last = isBlack(i * width * 4);
                 if (last) {
@@ -863,7 +823,8 @@
                         this._verNoScStore.push(noscalable);
                         noscalable = [];
                     }
-                } else {
+                }
+                else {
                     if (noscalable.length == 0) {
                         noscalable.push(i);
                     }
@@ -883,7 +844,7 @@
                 this._verNoScStore.push(noscalable);
             }
         },
-        _slicedraw: function(img) {
+        _slicedraw: function (img) {
             this._detect(img);
             var elem = img._element;
             var w = img.width;
@@ -891,8 +852,7 @@
             var width = this.width;
             var height = this.height;
             var ctx = this.context;
-
-            var getSum = function(store) {
+            var getSum = function (store) {
                 var s;
                 var sum = 0;
                 for (var i = 0, l = store.length; i < l; i++) {
@@ -901,7 +861,7 @@
                 }
                 return sum;
             };
-            var getRatio = function(array) {
+            var getRatio = function (array) {
                 var a, ret = [];
                 for (var i = 0, l = array.length; i < l; i++) {
                     a = array[i];
@@ -909,26 +869,24 @@
                 }
                 return ret;
             };
-            var fix = function(array, fix) {
+            var fix = function (array, fix) {
                 var a;
                 for (var i = 0, l = array.length; i < l; i++) {
                     a = array[i];
                     a.fix = fix[i];
                 }
             };
-            var distribute = function(value, ratio) {
+            var distribute = function (value, ratio) {
                 var ret = new Array(ratio.length);
                 var retSum = 0;
                 var maxi = 0;
                 var max = 0;
                 var sum = 0;
                 var quo;
-
-                ratio.forEach(function(n) {
+                ratio.forEach(function (n) {
                     sum += n;
                 });
                 quo = value / sum;
-
                 for (var i = 0, l = ret.length; i < l; i++) {
                     ret[i] = Math.round(quo * ratio[i]);
                     if (ratio[i] < max) {
@@ -936,40 +894,31 @@
                         max = ratio[i];
                     }
                 }
-
-                ret.forEach(function(n) {
+                ret.forEach(function (n) {
                     retSum += n;
                 });
-
                 ret[maxi] += value - retSum;
-
                 return ret;
             };
-
             var ratioH = getRatio(this._horScStore);
             var valueH = width - getSum(this._horNoScStore);
             var scaledW = distribute(valueH, ratioH);
-
             var ratioV = getRatio(this._verScStore);
             var valueV = height - getSum(this._verNoScStore);
             var scaledH = distribute(valueV, ratioV);
-
             fix(this._horScStore, scaledW);
             fix(this._verScStore, scaledH);
-
-            var verQueue = this._verScStore.concat(this._verNoScStore).sort(function(a, b) {
+            var verQueue = this._verScStore.concat(this._verNoScStore).sort(function (a, b) {
                 return a[0] - b[0];
             });
-            var horQueue = this._horScStore.concat(this._horNoScStore).sort(function(a, b) {
+            var horQueue = this._horScStore.concat(this._horNoScStore).sort(function (a, b) {
                 return a[0] - b[0];
             });
-
             var verQ;
             var horQ;
             var sx, sy, sw, sh, dw, dh;
             var dx = 0;
             var dy = 0;
-
             ctx.clearRect(0, 0, this.width, this.height);
             for (var i = 0, l = horQueue.length; i < l; i++) {
                 horQ = horQueue[i];
@@ -992,10 +941,10 @@
          * @type {Number}
          */
         width: {
-            get: function() {
+            get: function () {
                 return this._width;
             },
-            set: function(width) {
+            set: function (width) {
                 this._width = width;
                 if (this._element) {
                     this._element.width = width;
@@ -1009,10 +958,10 @@
          * @type {Number}
          */
         height: {
-            get: function() {
+            get: function () {
                 return this._height;
             },
-            set: function(height) {
+            set: function (height) {
                 this._height = height;
                 if (this._element) {
                     this._element.height = height;
@@ -1027,7 +976,7 @@
          * @param {Number} width New width.
          * @param {Number} height New height.
          */
-        resize: function(width, height) {
+        resize: function (width, height) {
             this._width = width;
             this._height = height;
             this._element.width = width;
@@ -1037,7 +986,6 @@
             }
         }
     });
-
     /**
      * @scope enchant.widget.EntityGroup
      */
@@ -1049,31 +997,30 @@
          * @constructs
          * @extends enchant.Entity
          */
-        initialize: function(width, height) {
+        initialize: function (width, height) {
             enchant.Entity.call(this);
             this._background;
             this.width = width;
             this.height = height;
             this.childNodes = [];
-
-            [ enchant.Event.ADDED_TO_SCENE, enchant.Event.REMOVED_FROM_SCENE ]
-                .forEach(function(event) {
-                    this.addEventListener(event, function(e) {
-                        this.childNodes.slice().forEach(function(child) {
-                            child.scene = this.scene;
-                            child.dispatchEvent(e);
-                        }, this);
-                    });
-                }, this);
+            [enchant.Event.ADDED_TO_SCENE, enchant.Event.REMOVED_FROM_SCENE]
+                .forEach(function (event) {
+                this.addEventListener(event, function (e) {
+                    this.childNodes.slice().forEach(function (child) {
+                        child.scene = this.scene;
+                        child.dispatchEvent(e);
+                    }, this);
+                });
+            }, this);
         },
         /**
          * @type {Number}
          */
         width: {
-            get: function() {
+            get: function () {
                 return this._width;
             },
-            set: function(width) {
+            set: function (width) {
                 this._width = width;
                 this._dirty = true;
                 if (this.background instanceof enchant.widget.Ninepatch) {
@@ -1085,10 +1032,10 @@
          * @type {Number}
          */
         height: {
-            get: function() {
+            get: function () {
                 return this._height;
             },
-            set: function(height) {
+            set: function (height) {
                 this._height = height;
                 this._dirty = true;
                 if (this.background instanceof enchant.widget.Ninepatch) {
@@ -1101,10 +1048,10 @@
          * @type {enchant.Surface}
          */
         background: {
-            get: function() {
+            get: function () {
                 return this._background;
             },
-            set: function(surface) {
+            set: function (surface) {
                 if (surface instanceof enchant.Surface) {
                     this._background = surface;
                     if (surface._css) {
@@ -1140,7 +1087,7 @@
          */
         lastChild: Object.getOwnPropertyDescriptor(enchant.Group.prototype, 'lastChild'),
         _dirty: Object.getOwnPropertyDescriptor(enchant.Group.prototype, '_dirty'),
-        cvsRender: function(ctx) {
+        cvsRender: function (ctx) {
             if (this.background &&
                 this.background._element.width > 0 &&
                 this.background._element.height > 0) {
@@ -1148,7 +1095,6 @@
             }
         }
     });
-
     /**
      * @scope enchant.widget.Modal
      */
@@ -1158,18 +1104,17 @@
          * @constructs
          * @extends enchant.Scene
          */
-        initialize: function() {
+        initialize: function () {
             enchant.Scene.call(this);
             var core = enchant.Core.instance;
             var shade = new enchant.Sprite(core.width, core.height);
             shade.backgroundColor = 'rgba(0, 0, 0, 255, 0.1)';
             this.addChild(shade);
-            this.addEventListener(enchant.Event.ENTER, function() {
+            this.addEventListener(enchant.Event.ENTER, function () {
                 shade.tl.fadeTo(0.7, 5, enchant.Easing.QUAD_EASEOUT);
             });
         }
     });
-
     /**
      * @scope enchant.widget.Button.prototype
      */
@@ -1181,7 +1126,7 @@
          * @constructs
          * @extends enchant.widget.EntityGroup
          */
-        initialize: function(content) {
+        initialize: function (content) {
             var core = enchant.Core.instance;
             content = content || '';
             var minwidth = enchant.widget._env.buttonWidth;
@@ -1194,28 +1139,26 @@
             var bg1 = new enchant.widget.Ninepatch(minwidth, minheight);
             bg1.src = core.assets['button.png'];
             this.image = bg1;
-
             var bg2 = new enchant.widget.Ninepatch(minwidth, minheight);
             bg2.src = core.assets['buttonPushed.png'];
             this.pushedimage = bg2;
-
             this.content = content;
             this.width = Math.max(this._content.width, minwidth);
             this.height = Math.max(this._content.height, minheight);
-            this.addEventListener(enchant.Event.TOUCH_START, function() {
+            this.addEventListener(enchant.Event.TOUCH_START, function () {
                 if (!this._pushedimage) {
                     return;
                 }
                 this.background = this._pushedimage;
             });
-            this.addEventListener(enchant.Event.TOUCH_END, function() {
+            this.addEventListener(enchant.Event.TOUCH_END, function () {
                 if (!this._pushedimage) {
                     return;
                 }
                 this.background = this._image;
             });
         },
-        refresh: function() {
+        refresh: function () {
             if (this._content) {
                 this._content.alignHorizontalCenterIn(this).alignVerticalCenterIn(this);
             }
@@ -1225,10 +1168,10 @@
          * @type number
          */
         width: {
-            get: function() {
+            get: function () {
                 return this._width;
             },
-            set: function(width) {
+            set: function (width) {
                 this._style.width = (this._width = width) + 'px';
                 if (this._image instanceof enchant.widget.Ninepatch) {
                     this._image.width = width;
@@ -1244,10 +1187,10 @@
          * @type number
          */
         height: {
-            get: function() {
+            get: function () {
                 return this._height;
             },
-            set: function(height) {
+            set: function (height) {
                 this._style.height = (this._height = height) + 'px';
                 if (this._image instanceof enchant.widget.Ninepatch) {
                     this._image.height = height;
@@ -1263,10 +1206,10 @@
          * @type {enchant.Surface}
          */
         image: {
-            get: function() {
+            get: function () {
                 return this._image;
             },
-            set: function(image) {
+            set: function (image) {
                 if (image == this._image) {
                     return;
                 }
@@ -1279,10 +1222,10 @@
          * @type {enchant.Surface}
          */
         pushedimage: {
-            get: function() {
+            get: function () {
                 return this._pushedimage;
             },
-            set: function(image) {
+            set: function (image) {
                 if (image == this._pushedimage) {
                     return;
                 }
@@ -1294,10 +1237,10 @@
          * @type {String}
          */
         content: {
-            get: function() {
+            get: function () {
                 return this._rawContent;
             },
-            set: function(content) {
+            set: function (content) {
                 this._rawContent = content;
                 var font = enchant.widget._env.buttonFont;
                 content = enchant.widget.parseContent(content, font);
@@ -1310,7 +1253,6 @@
             }
         }
     });
-
     /**
      * @scope enchant.widget.Alert
      */
@@ -1324,31 +1266,25 @@
          * @constructs
          * @extends enchant.widget.EntityGroup
          */
-        initialize: function(content, ac) {
+        initialize: function (content, ac) {
             var core = enchant.Core.instance;
             var dialogwidth = enchant.widget._env.dialogWidth;
             var dialogheight = enchant.widget._env.dialogHeight;
             enchant.widget.EntityGroup.call(this, dialogwidth, dialogheight);
             var margin = enchant.widget._env.dialogMargin;
-
             content = enchant.widget.parseContent(content);
             content.alignHorizontalCenterIn(this).alignTopIn(this, margin);
-
             var accept = new enchant.widget.Button(ac);
             accept.alignHorizontalCenterIn(this).alignBottomIn(this, margin);
-
             var that = this;
-            accept.addEventListener(enchant.Event.TOUCH_END, function() {
+            accept.addEventListener(enchant.Event.TOUCH_END, function () {
                 that.dispatchEvent(new enchant.Event(enchant.Event.ACCEPT));
             });
-
             var np = new enchant.widget.Ninepatch(this.width, this.height);
             np.src = core.assets['dialog.png'];
             this.background = np;
-
             this._content = content;
             this._accept = accept;
-
             this.addChild(content);
             this.addChild(accept);
         },
@@ -1356,10 +1292,9 @@
          * Function executed when agreement button is pushed.
          * @type {Function}
          */
-        onaccept: function() {
+        onaccept: function () {
         }
     });
-
     /**
      * @scope enchant.widget.Confirm
      */
@@ -1374,38 +1309,31 @@
          * @constructs
          * @extends enchant.widget.EntityGroup
          */
-        initialize: function(content, ac, ig) {
+        initialize: function (content, ac, ig) {
             var core = enchant.Core.instance;
             var dialogwidth = enchant.widget._env.dialogWidth;
             var dialogheight = enchant.widget._env.dialogHeight;
             enchant.widget.EntityGroup.call(this, dialogwidth, dialogheight);
             var margin = enchant.widget._env.dialogMargin;
-
             var content = enchant.widget.parseContent(content);
             content.alignHorizontalCenterIn(this).alignTopIn(this, margin);
-
             var cancel = new enchant.widget.Button(ig);
             cancel.alignLeftIn(this, margin).alignBottomIn(this, margin);
-
             var accept = new enchant.widget.Button(ac);
             accept.alignRightIn(this, margin).alignBottomIn(this, margin);
-
             var that = this;
-            cancel.addEventListener(enchant.Event.TOUCH_END, function() {
+            cancel.addEventListener(enchant.Event.TOUCH_END, function () {
                 that.dispatchEvent(new enchant.Event(enchant.Event.CANCEL));
             });
-            accept.addEventListener(enchant.Event.TOUCH_END, function() {
+            accept.addEventListener(enchant.Event.TOUCH_END, function () {
                 that.dispatchEvent(new enchant.Event(enchant.Event.ACCEPT));
             });
-
             var np = new enchant.widget.Ninepatch(this.width, this.height);
             np.src = core.assets['dialog.png'];
             this.background = np;
-
             this._content = content;
             this._cancel = cancel;
             this._accept = accept;
-
             this.addChild(content);
             this.addChild(cancel);
             this.addChild(accept);
@@ -1414,15 +1342,14 @@
          * Function executed when cancel button is pushed.
          * @type {Function}
          */
-        oncancel: function() {
+        oncancel: function () {
         },
         /**
          * Function executed when agreement button is pushed.
          */
-        onaccept: function() {
+        onaccept: function () {
         }
     });
-
     /**
      * @scope enchant.widget.Prompt
      */
@@ -1437,7 +1364,7 @@
          * @constructs
          * @extends enchant.widget.Confirm
          */
-        initialize: function(content, ac, ig, placeholder) {
+        initialize: function (content, ac, ig, placeholder) {
             enchant.widget.Confirm.call(this, content, ac, ig);
             var margin = enchant.widget._env.dialogMargin;
             var input = this._input = new enchant.widget.InputTextBox();
@@ -1450,15 +1377,14 @@
          * content of prompt.
          */
         value: {
-            get: function() {
+            get: function () {
                 return this._input.value;
             },
-            set: function(value) {
+            set: function (value) {
                 this._input.value = value;
             }
         }
     });
-
     /**
      * @scope enchant.widget.Input
      */
@@ -1469,18 +1395,16 @@
          * @constructs
          * @extends enchant.Entity
          */
-        initialize: function(type) {
+        initialize: function (type) {
             enchant.Entity.call(this);
             if (!type) {
                 type = 'input';
             }
             var that = this;
             this._input = document.createElement(type);
-
-            this._input.addEventListener('change', function(e) {
+            this._input.addEventListener('change', function (e) {
                 that.dispatchEvent(new enchant.Event(enchant.Event.CHANGE));
             });
-
             this._element = document.createElement('div');
             this._element.appendChild(this._input);
         },
@@ -1489,15 +1413,14 @@
          * @type {Boolean}
          */
         disabled: {
-            get: function() {
+            get: function () {
                 return this._input.disbaled;
             },
-            set: function(value) {
+            set: function (value) {
                 this._input.disabled = !!value;
             }
         }
     });
-
     /**
      * @scope enchant.widget.InputTextBox
      */
@@ -1507,22 +1430,18 @@
          * @constructs
          * @extends enchant.widget.Input
          */
-        initialize: function() {
+        initialize: function () {
             enchant.widget.Input.call(this);
             this._input.type = 'text';
-
             var metrics = getElementMetrics(this._element.innerHTML);
             this.width = metrics.width;
             this.height = metrics.height;
-
             var that = this;
             this._focused = false;
-
-            this._input.addEventListener('focus', function() {
+            this._input.addEventListener('focus', function () {
                 that._focused = true;
             });
-
-            this._input.addEventListener('blur', function() {
+            this._input.addEventListener('blur', function () {
                 that._focused = false;
             });
         },
@@ -1530,10 +1449,10 @@
          * @type {Number}
          */
         selectionStart: {
-            get: function() {
+            get: function () {
                 return this._input.selectionStart;
             },
-            set: function(n) {
+            set: function (n) {
                 this._input.selectionStart = n;
             }
         },
@@ -1541,10 +1460,10 @@
          * @type {Number}
          */
         selectionEnd: {
-            get: function() {
+            get: function () {
                 return this._input.selectionEnd;
             },
-            set: function(n) {
+            set: function (n) {
                 this._input.selectionEnd = n;
             }
         },
@@ -1552,14 +1471,15 @@
          * @type {Boolean}
          */
         focused: {
-            get: function() {
+            get: function () {
                 return this._focused;
             },
-            set: function(bool) {
+            set: function (bool) {
                 this._focused = bool;
                 if (bool) {
                     this._input.focus();
-                } else {
+                }
+                else {
                     this._input.blur();
                 }
             }
@@ -1569,10 +1489,10 @@
          * @type {String}
          */
         placeholder: {
-            get: function() {
+            get: function () {
                 return this._input.placeholder;
             },
-            set: function(value) {
+            set: function (value) {
                 this._input.placeholder = value;
             }
         },
@@ -1581,10 +1501,10 @@
          * @type {String}
          */
         value: {
-            get: function() {
+            get: function () {
                 return this._input.value;
             },
-            set: function(value) {
+            set: function (value) {
                 this._input.value = value;
             }
         },
@@ -1593,10 +1513,10 @@
          * @type {Number}
          */
         width: {
-            get: function() {
+            get: function () {
                 return this._width;
             },
-            set: function(width) {
+            set: function (width) {
                 this._width = width;
                 this._style.width = width + 'px';
                 this._input.style.width = width + 'px';
@@ -1607,17 +1527,16 @@
          * @type {Number}
          */
         height: {
-            get: function() {
+            get: function () {
                 return this._height;
             },
-            set: function(height) {
+            set: function (height) {
                 this._height = height;
                 this._style.height = height + 'px';
                 this._input.style.height = height + 'px';
             }
         }
     });
-
     /**
      * @scope enchant.widget.InputSelectBox
      */
@@ -1635,7 +1554,7 @@
          * @constructs
          * @extends enchant.widget.Input
          */
-        initialize: function(table) {
+        initialize: function (table) {
             enchant.widget.Input.call(this, 'select');
             var content;
             for (var prop in table) {
@@ -1645,11 +1564,9 @@
                 opt.textContent = content;
                 this._input.appendChild(opt);
             }
-
-            this._input.addEventListener('mousedown', function(e) {
+            this._input.addEventListener('mousedown', function (e) {
                 e.stopPropagation();
             });
-
             var metrics = getElementMetrics(this._element.innerHTML);
             this.width = metrics.width;
             this.height = metrics.height;
@@ -1659,16 +1576,17 @@
          * @type {String}
          */
         selected: {
-            get: function() {
+            get: function () {
                 return this._input.options[this._input.selectedIndex].value;
             },
-            set: function(value) {
+            set: function (value) {
                 var opt;
                 for (var i = 0, l = this._input.options.length; i < l; i++) {
                     opt = this._input.options[i];
                     if (opt.getAttribute('value') == value) {
                         opt.selected = true;
-                    } else {
+                    }
+                    else {
                         opt.selected = false;
                     }
                 }
@@ -1676,7 +1594,6 @@
             }
         }
     });
-
     /**
      * @scope enchant.widget.InputCheckBox
      */
@@ -1689,7 +1606,7 @@
          * @constructs
          * @extends enchant.widget.Input
          */
-        initialize: function(value, text, checked) {
+        initialize: function (value, text, checked) {
             enchant.widget.Input.call(this);
             this._input.type = 'checkbox';
             var label = document.createDocumentFragment();
@@ -1705,15 +1622,14 @@
          * @type {Boolean}
          */
         checked: {
-            get: function() {
+            get: function () {
                 return this._input.checked;
             },
-            set: function(value) {
+            set: function (value) {
                 this._input.checked = !!value;
             }
         }
     });
-
     /**
      * @scope enchant.widget.InputTextArea
      */
@@ -1723,7 +1639,7 @@
          * @constructs
          * @extends enchant.Entity
          */
-        initialize: function() {
+        initialize: function () {
             enchant.Entity.call(this);
             var textarea = this._textarea = document.createElement('textarea');
             textarea.style.resize = 'none';
@@ -1734,25 +1650,24 @@
             this._focused = false;
             this._next = null;
             this._prev = null;
-
             var that = this;
-            this.addEventListener(enchant.Event.TOUCH_END, function() {
+            this.addEventListener(enchant.Event.TOUCH_END, function () {
                 this._updateVerticalDist();
             });
-            this._textarea.addEventListener('input', function() {
+            this._textarea.addEventListener('input', function () {
                 that._updateVerticalDist();
             });
-            this._textarea.addEventListener('focus', function() {
+            this._textarea.addEventListener('focus', function () {
                 that._focused = true;
             });
-            this._textarea.addEventListener('blur', function() {
+            this._textarea.addEventListener('blur', function () {
                 that._focused = false;
             });
-            this._textarea.addEventListener('change', function(e) {
+            this._textarea.addEventListener('change', function (e) {
                 that.dispatchEvent(new enchant.Event(enchant.Event.CHANGE));
             });
         },
-        _updateVerticalDist: function() {
+        _updateVerticalDist: function () {
             var w = this.value.split('\n');
             var n = this.selectionStart;
             var s = 0;
@@ -1766,12 +1681,14 @@
             var ind = this.selectionStart - s;
             if (0 < i) {
                 this._prev = -Math.max(w[i - 1].length, ind) - 1;
-            } else {
+            }
+            else {
                 this._prev = -ind;
             }
             if (i < l - 1) {
                 this._next = w[i].length - ind + Math.min(ind, w[i + 1].length) + 1;
-            } else {
+            }
+            else {
                 this._next = w[i].length - ind;
             }
         },
@@ -1779,10 +1696,10 @@
          * @type {Number}
          */
         selectionStart: {
-            get: function() {
+            get: function () {
                 return this._textarea.selectionStart;
             },
-            set: function(n) {
+            set: function (n) {
                 this._textarea.selectionStart = n;
             }
         },
@@ -1790,10 +1707,10 @@
          * @type {Number}
          */
         selectionEnd: {
-            get: function() {
+            get: function () {
                 return this._textarea.selectionEnd;
             },
-            set: function(n) {
+            set: function (n) {
                 this._textarea.selectionEnd = n;
             }
         },
@@ -1801,14 +1718,15 @@
          * @type {Boolean}
          */
         focused: {
-            get: function() {
+            get: function () {
                 return this._focused;
             },
-            set: function(bool) {
+            set: function (bool) {
                 this._focused = bool;
                 if (bool) {
                     this._textarea.focus();
-                } else {
+                }
+                else {
                     this._textarea.blur();
                 }
             }
@@ -1821,10 +1739,10 @@
          * @type {String}
          */
         placeholder: {
-            get: function() {
+            get: function () {
                 return this._textarea.placeholder;
             },
-            set: function(value) {
+            set: function (value) {
                 this._textarea.placeholder = value;
             }
         },
@@ -1833,10 +1751,10 @@
          * @type {String}
          */
         value: {
-            get: function() {
+            get: function () {
                 return this._textarea.value;
             },
-            set: function(value) {
+            set: function (value) {
                 this._textarea.value = value;
             }
         },
@@ -1845,10 +1763,10 @@
          * @type {Number}
          */
         width: {
-            get: function() {
+            get: function () {
                 return this._width;
             },
-            set: function(width) {
+            set: function (width) {
                 this._width = width;
                 this._style.width = width + 'px';
                 this._textarea.style.width = width + 'px';
@@ -1859,17 +1777,16 @@
          * @type {Number}
          */
         height: {
-            get: function() {
+            get: function () {
                 return this._height;
             },
-            set: function(height) {
+            set: function (height) {
                 this._height = height;
                 this._style.height = height + 'px';
                 this._textarea.style.height = height + 'px';
             }
         }
     });
-
     /**
      * @scope enchant.widget.AlertScene
      */
@@ -1888,29 +1805,26 @@
          * @constructs
          * @extends enchant.widget.Modal
          */
-        initialize: function(content, acceptName) {
+        initialize: function (content, acceptName) {
             var core = enchant.Core.instance;
             enchant.widget.Modal.call(this);
-            this._onaccept = function() {
+            this._onaccept = function () {
             };
-            this.callback = function() {
+            this.callback = function () {
             };
             acceptName = acceptName || enchant.widget._env.acceptName;
-
             var alert = new enchant.widget.Alert(content, acceptName);
             this.addChild(alert);
             alert.alignHorizontalCenterIn(this).alignVerticalCenterIn(this);
-
             var scene = this;
-
-            alert.onaccept = function() {
+            alert.onaccept = function () {
                 core.popScene();
                 scene._onaccept.apply(this, arguments);
             };
-            alert.addEventListener(enchant.Event.ACCEPT, function() {
+            alert.addEventListener(enchant.Event.ACCEPT, function () {
                 scene.callback();
             });
-            this.addEventListener(enchant.Event.ENTER, function() {
+            this.addEventListener(enchant.Event.ENTER, function () {
                 Effect.popup.call(alert);
             });
         },
@@ -1918,15 +1832,14 @@
          * @type {Function}
          */
         onaccept: {
-            get: function() {
+            get: function () {
                 return this._onaccept;
             },
-            set: function(func) {
+            set: function (func) {
                 this._onaccept = func;
             }
         }
     });
-
     /**
      * @scope enchant.widget.ConfirmScene
      */
@@ -1950,38 +1863,36 @@
          * @constructs
          * @extends enchant.widget.Modal
          */
-        initialize: function(content, acceptName, cancelName) {
+        initialize: function (content, acceptName, cancelName) {
             var core = enchant.Core.instance;
             enchant.widget.Modal.call(this);
-            this._oncancel = function() {
+            this._oncancel = function () {
             };
-            this._onaccept = function() {
+            this._onaccept = function () {
             };
-            this.callback = function() {
+            this.callback = function () {
             };
             cancelName = cancelName || enchant.widget._env.cancelName;
             acceptName = acceptName || enchant.widget._env.acceptName;
-
             var confirm = new enchant.widget.Confirm(content, acceptName, cancelName);
             this.addChild(confirm);
             confirm.alignHorizontalCenterIn(this).alignVerticalCenterIn(this);
             var scene = this;
-
-            confirm.oncancel = function() {
+            confirm.oncancel = function () {
                 core.popScene();
                 scene._oncancel.apply(this, arguments);
             };
-            confirm.onaccept = function() {
+            confirm.onaccept = function () {
                 core.popScene();
                 scene._onaccept.apply(this, arguments);
             };
-            confirm.addEventListener(enchant.Event.CANCEL, function() {
+            confirm.addEventListener(enchant.Event.CANCEL, function () {
                 scene.callback(false);
             });
-            confirm.addEventListener(enchant.Event.ACCEPT, function() {
+            confirm.addEventListener(enchant.Event.ACCEPT, function () {
                 scene.callback(true);
             });
-            this.addEventListener(enchant.Event.ENTER, function() {
+            this.addEventListener(enchant.Event.ENTER, function () {
                 Effect.popup.call(confirm);
             });
         },
@@ -1989,10 +1900,10 @@
          * @type {Function}
          */
         oncancel: {
-            get: function() {
+            get: function () {
                 return this._oncancel;
             },
-            set: function(func) {
+            set: function (func) {
                 this._oncancel = func;
             }
         },
@@ -2000,15 +1911,14 @@
          * @type {Function}
          */
         onaccept: {
-            get: function() {
+            get: function () {
                 return this._onaccept;
             },
-            set: function(func) {
+            set: function (func) {
                 this._onaccept = func;
             }
         }
     });
-
     /**
      * @scope enchant.widget.PromptScene
      */
@@ -2036,61 +1946,59 @@
          * @constructs
          * @extends enchant.widget.Modal
          */
-        initialize: function(content, acceptName, cancelName, placeholder) {
+        initialize: function (content, acceptName, cancelName, placeholder) {
             var core = enchant.Core.instance;
             var margin = enchant.widget._env.dialogMargin;
             enchant.widget.Modal.call(this);
             cancelName = cancelName || enchant.widget._env.cancelName;
             acceptName = acceptName || enchant.widget._env.acceptName;
-            this.callback = function() {
+            this.callback = function () {
             };
-            this._oncancel = function() {
+            this._oncancel = function () {
             };
-            this._onaccept = function() {
+            this._onaccept = function () {
             };
             placeholder = placeholder || '';
-
             var prompt = this._prompt = new enchant.widget.Prompt(content, acceptName, cancelName, placeholder);
             prompt.alignHorizontalCenterIn(this).alignVerticalCenterIn(this);
             this.addChild(prompt);
             var scene = this;
-
-            prompt.oncancel = function() {
+            prompt.oncancel = function () {
                 core.popScene();
                 scene._oncancel.apply(this, arguments);
             };
-            prompt.onaccept = function() {
+            prompt.onaccept = function () {
                 core.popScene();
                 scene._onaccept.apply(this, arguments);
             };
-            prompt.addEventListener(enchant.Event.CANCEL, function() {
+            prompt.addEventListener(enchant.Event.CANCEL, function () {
                 scene.callback(null);
             });
-            prompt.addEventListener(enchant.Event.ACCEPT, function() {
+            prompt.addEventListener(enchant.Event.ACCEPT, function () {
                 scene.callback(prompt.value);
             });
-            this.addEventListener(enchant.Event.ENTER, function() {
+            this.addEventListener(enchant.Event.ENTER, function () {
                 Effect.popup.call(prompt);
             });
-            this.addEventListener(enchant.Event.UP_BUTTON_DOWN, function() {
+            this.addEventListener(enchant.Event.UP_BUTTON_DOWN, function () {
                 if (prompt._input.focused) {
                     prompt._input.selectionStart = 0;
                     prompt._input.selectionEnd = 0;
                 }
             });
-            this.addEventListener(enchant.Event.DOWN_BUTTON_DOWN, function() {
+            this.addEventListener(enchant.Event.DOWN_BUTTON_DOWN, function () {
                 if (prompt._input.focused) {
                     prompt._input.selectionStart = prompt._input.value.length;
                     prompt._input.selectionEnd = prompt._input.value.length;
                 }
             });
-            this.addEventListener(enchant.Event.LEFT_BUTTON_DOWN, function() {
+            this.addEventListener(enchant.Event.LEFT_BUTTON_DOWN, function () {
                 if (prompt._input.focused) {
                     prompt._input.selectionStart -= 1;
                     prompt._input.selectionEnd -= 1;
                 }
             });
-            this.addEventListener(enchant.Event.RIGHT_BUTTON_DOWN, function() {
+            this.addEventListener(enchant.Event.RIGHT_BUTTON_DOWN, function () {
                 if (prompt._input.focused) {
                     prompt._input.selectionStart += 1;
                 }
@@ -2101,11 +2009,10 @@
          * @type {String}
          */
         value: {
-            get: function() {
+            get: function () {
                 return this._prompt.value;
-
             },
-            set: function(value) {
+            set: function (value) {
                 this._prompt.value = value;
             }
         },
@@ -2113,10 +2020,10 @@
          * @type {Function}
          */
         oncancel: {
-            get: function() {
+            get: function () {
                 return this._oncancel;
             },
-            set: function(func) {
+            set: function (func) {
                 this._oncancel = func;
             }
         },
@@ -2124,15 +2031,14 @@
          * @type {Function}
          */
         onaccept: {
-            get: function() {
+            get: function () {
                 return this._onaccept;
             },
-            set: function(func) {
+            set: function (func) {
                 this._onaccept = func;
             }
         }
     });
-
     /**
      * @scope enchant.widget.InputScene
      */
@@ -2158,25 +2064,23 @@
          * @constructs
          * @extends enchant.widget.Modal
          */
-        initialize: function(text, acceptName, cancelName, placeholder) {
+        initialize: function (text, acceptName, cancelName, placeholder) {
             var core = enchant.Core.instance;
             var minheight = enchant.widget._env.inputMinHeight;
             var maxheight = enchant.widget._env.inputMaxHeight;
             var dh = maxheight - minheight;
-            this.callback = function() {
+            this.callback = function () {
             };
-            this._oncancel = function() {
+            this._oncancel = function () {
             };
-            this._onaccept = function() {
+            this._onaccept = function () {
             };
             this._menu = null;
             cancelName = cancelName || enchant.widget._env.cancelName;
             acceptName = acceptName || enchant.widget._env.acceptName;
             placeholder = placeholder || '';
-
             enchant.widget.Modal.call(this);
             var scene = this;
-
             var cancel = new enchant.widget.Button(cancelName);
             var accept = new enchant.widget.Button(acceptName);
             var bar = new enchant.widget.NavigationBar(text, cancel, accept);
@@ -2186,58 +2090,57 @@
             textarea.width = core.width;
             textarea.height = maxheight;
             textarea.placeholder = placeholder;
-            textarea.oncancel = function() {
+            textarea.oncancel = function () {
                 core.popScene();
                 scene._oncancel.apply(this, arguments);
             };
-            textarea.onaccept = function() {
+            textarea.onaccept = function () {
                 core.popScene();
                 scene._onaccept.apply(this, arguments);
             };
             this.addChild(textarea);
-
             var _area = textarea._textarea;
-            _area.onfocus = function() {
+            _area.onfocus = function () {
                 Effect.resizeTo.call(textarea, core.width, minheight, 5, enchant.Easing.QUAD_EASEOUT);
                 if (scene._menu != null) {
                     scene._menu.tl.moveBy(0, -dh, 5, enchant.Easing.QUAD_EASEOUT);
                 }
             };
-            _area.onblur = function() {
+            _area.onblur = function () {
                 Effect.resizeTo.call(textarea, core.width, maxheight, 5, enchant.Easing.QUAD_EASEOUT);
                 if (scene._menu != null) {
                     scene._menu.tl.moveBy(0, dh, 5, enchant.Easing.QUAD_EASEOUT);
                 }
             };
-            cancel.addEventListener(enchant.Event.TOUCH_END, function() {
+            cancel.addEventListener(enchant.Event.TOUCH_END, function () {
                 textarea.dispatchEvent(new enchant.Event(enchant.Event.CANCEL));
                 scene.callback(null);
             });
-            accept.addEventListener(enchant.Event.TOUCH_END, function() {
+            accept.addEventListener(enchant.Event.TOUCH_END, function () {
                 textarea.dispatchEvent(new enchant.Event(enchant.Event.ACCEPT));
                 scene.callback(textarea.value);
             });
-            this.addEventListener(enchant.Event.UP_BUTTON_DOWN, function() {
+            this.addEventListener(enchant.Event.UP_BUTTON_DOWN, function () {
                 if (textarea.focused) {
                     textarea.selectionStart += textarea._prev;
                     textarea.selectionEnd += textarea._prev;
                     textarea._updateVerticalDist();
                 }
             });
-            this.addEventListener(enchant.Event.DOWN_BUTTON_DOWN, function() {
+            this.addEventListener(enchant.Event.DOWN_BUTTON_DOWN, function () {
                 if (textarea.focused) {
                     textarea.selectionStart += textarea._next;
                     textarea._updateVerticalDist();
                 }
             });
-            this.addEventListener(enchant.Event.LEFT_BUTTON_DOWN, function() {
+            this.addEventListener(enchant.Event.LEFT_BUTTON_DOWN, function () {
                 if (textarea.focused) {
                     textarea.selectionStart -= 1;
                     textarea.selectionEnd -= 1;
                     textarea._updateVerticalDist();
                 }
             });
-            this.addEventListener(enchant.Event.RIGHT_BUTTON_DOWN, function() {
+            this.addEventListener(enchant.Event.RIGHT_BUTTON_DOWN, function () {
                 if (textarea.focused) {
                     textarea.selectionStart += 1;
                     textarea._updateVerticalDist();
@@ -2248,10 +2151,10 @@
          * @type {*}
          */
         menu: {
-            get: function() {
+            get: function () {
                 return this._menu;
             },
-            set: function(menu) {
+            set: function (menu) {
                 if (this._menu) {
                     this.removeChild(this._menu);
                 }
@@ -2266,10 +2169,10 @@
          * @type {String}
          */
         value: {
-            get: function() {
+            get: function () {
                 return this._textarea.value;
             },
-            set: function(value) {
+            set: function (value) {
                 this._textarea.value = value;
             }
         },
@@ -2277,10 +2180,10 @@
          * @type {String}
          */
         placeholder: {
-            get: function() {
+            get: function () {
                 return this._textarea.placeholder;
             },
-            set: function(str) {
+            set: function (str) {
                 this._textarea.placeholder = str;
             }
         },
@@ -2288,10 +2191,10 @@
          * @type {Function}
          */
         oncancel: {
-            get: function() {
+            get: function () {
                 return this._oncancel;
             },
-            set: function(func) {
+            set: function (func) {
                 this._oncancel = func;
             }
         },
@@ -2299,15 +2202,14 @@
          * @type {Function}
          */
         onaccept: {
-            get: function() {
+            get: function () {
                 return this._onaccept;
             },
-            set: function(func) {
+            set: function (func) {
                 this._onaccept = func;
             }
         }
     });
-
     /**
      * @scope enchant.widget.ListElement
      */
@@ -2322,7 +2224,7 @@
          * @constructs
          * @extends enchant.widget.EntityGroup
          */
-        initialize: function(width, height) {
+        initialize: function (width, height) {
             enchant.widget.EntityGroup.call(this, width, height);
             this._content;
             this._rawContent;
@@ -2330,7 +2232,7 @@
         /**
          * Renew change.
          */
-        refresh: function() {
+        refresh: function () {
             var content = this._content;
             var margin = enchant.widget._env.listItemMargin;
             if (content) {
@@ -2343,10 +2245,10 @@
          * @type {enchant.Entity[]}
          */
         content: {
-            get: function() {
+            get: function () {
                 return this._rawContent;
             },
-            set: function(content) {
+            set: function (content) {
                 this._rawContent = content;
                 content = enchant.widget.parseContent(content);
                 if (this._content) {
@@ -2361,10 +2263,10 @@
          * @type {Number}
          */
         width: {
-            get: function() {
+            get: function () {
                 return this._width;
             },
-            set: function(width) {
+            set: function (width) {
                 this._style.width = (this._width = width) + 'px';
                 if (this.background instanceof enchant.widget.Ninepatch) {
                     this.background.width = this.width;
@@ -2378,10 +2280,10 @@
          * @type {Number}
          */
         height: {
-            get: function() {
+            get: function () {
                 return this._height;
             },
-            set: function(height) {
+            set: function (height) {
                 this._style.height = (this._height = height) + 'px';
                 if (this.background instanceof enchant.widget.Ninepatch) {
                     this.background.height = this.height;
@@ -2392,7 +2294,6 @@
             }
         }
     });
-
     /**
      * @scope enchant.widget.ListItem
      */
@@ -2410,7 +2311,7 @@
          * @constructs
          * @extends enchant.widget.ListElement
          */
-        initialize: function(width, height, content, icon, rightIcon) {
+        initialize: function (width, height, content, icon, rightIcon) {
             var core = enchant.Core.instance;
             width = width || core.width;
             height = height || enchant.widget._env.itemHeight;
@@ -2434,7 +2335,7 @@
         /**
          * Renew changes.
          */
-        refresh: function() {
+        refresh: function () {
             var icon = this._icon;
             var content = this._content;
             var right = this._rightIcon;
@@ -2445,7 +2346,8 @@
                 if (content) {
                     content.alignRightOf(icon, margin).alignVerticalCenterIn(this);
                 }
-            } else if (content) {
+            }
+            else if (content) {
                 content.alignLeftIn(this, margin).alignVerticalCenterIn(this);
             }
             if (right) {
@@ -2458,10 +2360,10 @@
          * @type {enchant.Sprite|enchant.Surface}
          */
         icon: {
-            get: function() {
+            get: function () {
                 return this._rawIcon;
             },
-            set: function(icon) {
+            set: function (icon) {
                 this._rawIcon = icon;
                 icon = enchant.widget.parseContent(icon);
                 if (this._icon) {
@@ -2478,10 +2380,10 @@
          * @type {enchant.Sprite|enchant.Surface}
          */
         rightIcon: {
-            get: function() {
+            get: function () {
                 return this._rawRightIcon;
             },
-            set: function(right) {
+            set: function (right) {
                 this._rawRightIcon = right;
                 right = enchant.widget.parseContent(right);
                 if (this._rightIcon) {
@@ -2493,7 +2395,6 @@
             }
         }
     });
-
     /**
      * @scope enchant.widget.ListItemVertical
      */
@@ -2509,7 +2410,7 @@
          * @constructs
          * @extends enchant.widget.ListElement
          */
-        initialize: function(width, height, content, header, footer) {
+        initialize: function (width, height, content, header, footer) {
             var core = enchant.Core.instance;
             enchant.widget.ListElement.call(this, width, height);
             this._header;
@@ -2533,19 +2434,19 @@
         /**
          * Renew change.
          */
-        refresh: function() {
+        refresh: function () {
             var header = this._header;
             var footer = this._footer;
             var content = this._content;
             var margin = enchant.widget._env.listItemMargin;
             if (header) {
                 header.alignLeftIn(this, margin).alignTopIn(this, margin);
-
                 Adjust.fillX.call(content, this, margin);
                 if (content) {
                     content.alignLeftIn(this, margin).alignBottomOf(header, margin);
                 }
-            } else {
+            }
+            else {
                 Adjust.fillX.call(content, this, margin);
                 if (content) {
                     content.alignLeftIn(this, margin).alignTopIn(this, margin);
@@ -2557,7 +2458,7 @@
             var height = 0;
             var p;
             var scale;
-            var contents = [ header, content, footer ];
+            var contents = [header, content, footer];
             for (prop in contents) {
                 p = contents[prop];
                 if (p) {
@@ -2577,10 +2478,10 @@
          * @type {*}
          */
         header: {
-            get: function() {
+            get: function () {
                 return this._rawHeader;
             },
-            set: function(header) {
+            set: function (header) {
                 this._rawHeader = header;
                 header = enchant.widget.parseContent(header);
                 if (this._header) {
@@ -2597,10 +2498,10 @@
          * @type {*}
          */
         footer: {
-            get: function() {
+            get: function () {
                 return this._rawFooter;
             },
-            set: function(footer) {
+            set: function (footer) {
                 this._rawFooter = footer;
                 footer = enchant.widget.parseContent(footer);
                 if (this._footer) {
@@ -2612,7 +2513,6 @@
             }
         }
     });
-
     /**
      * @scope enchant.widget.ScrollView
      */
@@ -2625,7 +2525,7 @@
          * @constructs
          * @extends enchant.widget.EntityGroup
          */
-        initialize: function(width, height) {
+        initialize: function (width, height) {
             enchant.widget.EntityGroup.call(this, width, height);
             this._style.overflow = 'hidden';
             this._content;
@@ -2635,10 +2535,10 @@
          * @type {enchant.Entity}
          */
         content: {
-            oet: function() {
+            oet: function () {
                 return this._content;
             },
-            set: function(content) {
+            set: function (content) {
                 if (this._content) {
                     this.removeChild(this._content);
                 }
@@ -2651,7 +2551,7 @@
          * Correct level will become upwards scroll.
          * @param {Number} dy Scroll level.
          */
-        scroll: function(dy) {
+        scroll: function (dy) {
             if (!this._content) {
                 return;
             }
@@ -2659,19 +2559,18 @@
                 this._content.y = 0;
                 return;
             }
-            var max = 0
-            var min = this.height - this._content.height
-
+            var max = 0;
+            var min = this.height - this._content.height;
             var sy = this._content.y + dy;
             if (sy > max) {
                 dy = max - this._content.y;
-            } else if (sy < min) {
+            }
+            else if (sy < min) {
                 dy = min - this._content.y;
             }
             this._content.y += dy;
         }
     });
-
     /**
      * @scope enchant.widget.ListView
      */
@@ -2683,7 +2582,7 @@
          * @constructs
          * @extends enchant.widget.ScrollView
          */
-        initialize: function(width, height, draggable) {
+        initialize: function (width, height, draggable) {
             enchant.widget.ScrollView.call(this, width, height);
             var detector = new enchant.widget.GestureDetector(this);
             this.draggable = !!draggable;
@@ -2695,21 +2594,18 @@
             var pthreshold = 0;
             var nthreshold = 0;
             this._clipping = true;
-
-            enchant.widget.GestureDetector.gestureEvents.forEach(function(type) {
-                this.addEventListener(type, function(e) {
+            enchant.widget.GestureDetector.gestureEvents.forEach(function (type) {
+                this.addEventListener(type, function (e) {
                     var item = this.getSelectedItem(e);
                     if (item != null) {
                         item.dispatchEvent(e);
                     }
                 });
             }, this);
-
             var removeChild = enchant.widget.EntityGroup.prototype.removeChild;
             var insertBefore = enchant.widget.EntityGroup.prototype.insertBefore;
-
             var that = this;
-            var checkChangePos = function(direction) {
+            var checkChangePos = function (direction) {
                 var y = dragging.y;
                 var my = dragging.height;
                 var nextSibling;
@@ -2718,7 +2614,8 @@
                     removeChild.call(that._content, dragging);
                     insertBefore.call(that._content, dragging, prev);
                     updateHoldStat(dragging);
-                } else if (next && nthreshold <= y && direction > 0) {
+                }
+                else if (next && nthreshold <= y && direction > 0) {
                     next.y -= my;
                     removeChild.call(that._content, dragging);
                     var nextSibling = that._content.childNodes[that._content.childNodes.indexOf(next) + 1];
@@ -2726,23 +2623,24 @@
                     updateHoldStat(dragging);
                 }
             };
-
-            var updateHoldStat = function(element) {
+            var updateHoldStat = function (element) {
                 var i = that._content.childNodes.indexOf(element);
                 if (i > 0) {
                     prev = that._content.childNodes[i - 1];
                     pthreshold = prev.y + prev.height - element.height / 2;
-                } else {
+                }
+                else {
                     prev = null;
                 }
                 if (i < that._content.childNodes.length - 1) {
                     next = that._content.childNodes[i + 1];
                     nthreshold = next.y - element.height / 2;
-                } else {
+                }
+                else {
                     next = null;
                 }
             };
-            this.addEventListener(enchant.Event.ENTER_FRAME, function() {
+            this.addEventListener(enchant.Event.ENTER_FRAME, function () {
                 if (dy != 0) {
                     var old = this._content.y;
                     this.scroll(dy);
@@ -2750,7 +2648,7 @@
                     dragging.y -= this._content.y - old;
                 }
             });
-            this.addEventListener(enchant.Event.HOLD, function(e) {
+            this.addEventListener(enchant.Event.HOLD, function (e) {
                 if (!this.draggable) {
                     return;
                 }
@@ -2762,14 +2660,15 @@
                 dragging._style.zIndex = 2;
                 updateHoldStat(dragging);
             });
-            this.addEventListener(enchant.Event.RELEASE, function() {
+            this.addEventListener(enchant.Event.RELEASE, function () {
                 if (!this.draggable || dragging == null) {
                     return;
                 }
                 dy = 0;
                 if (prev) {
                     dragging.y = prev.y + prev.height;
-                } else {
+                }
+                else {
                     dragging.y = 0;
                 }
                 dragging.opacity = 1.0;
@@ -2779,7 +2678,7 @@
                 next = null;
             });
             var spd = 40;
-            this.addEventListener(enchant.Event.DRAG, function(e) {
+            this.addEventListener(enchant.Event.DRAG, function (e) {
                 if (!this.draggable || dragging == null) {
                     return;
                 }
@@ -2787,13 +2686,15 @@
                 dragging.y += e.dy;
                 if (e.localY < spd) {
                     dy = spd - e.localY;
-                } else if (this.height - spd < e.localY) {
+                }
+                else if (this.height - spd < e.localY) {
                     dy = this.height - spd - e.localY;
-                } else {
+                }
+                else {
                     dy = 0;
                 }
             });
-            this.addEventListener(enchant.Event.SLIP, function(e) {
+            this.addEventListener(enchant.Event.SLIP, function (e) {
                 this.scroll(e.dy);
             });
         },
@@ -2802,10 +2703,10 @@
          * @type {enchant.widget.ListElement[]}
          */
         content: {
-            get: function() {
+            get: function () {
                 return this._content.childNodes;
             },
-            set: function(content) {
+            set: function (content) {
                 var addChild = enchant.widget.EntityGroup.prototype.addChild;
                 var removeChild = enchant.widget.EntityGroup.prototype.removeChild;
                 if (this._content) {
@@ -2822,7 +2723,7 @@
          * @param {enchant.Event} event
          * @return {enchant.widget.ListElement}
          */
-        getSelectedItem: function(e) {
+        getSelectedItem: function (e) {
             var y = e.localY - this._content.y;
             var list = this._content;
             var child;
@@ -2836,19 +2737,18 @@
             }
             return null;
         },
-        addChild: function(child) {
+        addChild: function (child) {
             this._content.addChild(child);
         },
-        removeChild: function(child) {
+        removeChild: function (child) {
             this._content.removeChild(child);
         },
-        insertBefore: function(child, reference) {
+        insertBefore: function (child, reference) {
             this._content.insertBefore(child, reference);
         }
     });
-
     var List = enchant.Class.create(enchant.widget.EntityGroup, {
-        initialize: function(array) {
+        initialize: function (array) {
             var core = enchant.Core.instance;
             enchant.widget.EntityGroup.call(this);
             this.width = core.width;
@@ -2859,35 +2759,35 @@
                 element = array[i];
                 this.addChild(element);
             }
-
             this._dragging = null;
             this._pthreshold = 0;
             this._nthreshold = 0;
             this._index = 0;
         },
-        addChild: function(child) {
+        addChild: function (child) {
             var i = this.childNodes.length;
             enchant.widget.EntityGroup.prototype.addChild.call(this, child);
             this.refresh(i - 1);
         },
-        insertBefore: function(child, reference) {
+        insertBefore: function (child, reference) {
             enchant.widget.EntityGroup.prototype.insertBefore.call(this, child, reference);
             var i = this.childNodes.indexOf(child);
             this.refresh(i - 1);
         },
-        removeChild: function(child) {
+        removeChild: function (child) {
             var i = this.childNodes.indexOf(child);
             if (i != -1) {
                 enchant.widget.EntityGroup.prototype.removeChild.call(this, child);
                 this.refresh(i - 1);
             }
         },
-        refresh: function(i) {
+        refresh: function (i) {
             var i, l, h, start, child;
             if (i > 0) {
                 start = this.childNodes[i - 1];
                 h = start.y + start.height;
-            } else {
+            }
+            else {
                 i = 0;
                 h = 0;
             }
@@ -2898,7 +2798,7 @@
             }
             this.height = this._itemHeight = h;
         },
-        _getElementByLocalPosition: function(localX, localY) {
+        _getElementByLocalPosition: function (localX, localY) {
             var child;
             var h = 0;
             for (var i = 0, l = this.childNodes.length; i < l; i++) {
@@ -2911,7 +2811,6 @@
             return child;
         }
     });
-
     /**
      * @scope enchant.widget.NavigationBar
      */
@@ -2925,7 +2824,7 @@
          * @constructs
          * @extends enchant.widget.EntityGroup
          */
-        initialize: function(center, left, right) {
+        initialize: function (center, left, right) {
             var core = enchant.Core.instance;
             enchant.widget.EntityGroup.call(this, core.width, enchant.widget._env.itemHeight);
             this._center;
@@ -2942,7 +2841,6 @@
                 this.right = right;
             }
             this.refresh();
-
             var np = new enchant.widget.Ninepatch(this.width, this.height);
             np.src = core.assets['navigationBar.png'];
             this.background = np;
@@ -2950,7 +2848,7 @@
         /**
          * Renew change.
          */
-        refresh: function() {
+        refresh: function () {
             var center = this._center;
             var left = this._left;
             var right = this._right;
@@ -2970,10 +2868,10 @@
          * @type {*}
          */
         center: {
-            get: function() {
+            get: function () {
                 return this._rawCenter;
             },
-            set: function(center) {
+            set: function (center) {
                 this._rawCenter = center;
                 center = enchant.widget.parseContent(center, enchant.widget._env.navigationBarFont);
                 if (this._center) {
@@ -2990,10 +2888,10 @@
          * @type {*}
          */
         left: {
-            get: function() {
+            get: function () {
                 return this._rawLeft;
             },
-            set: function(left) {
+            set: function (left) {
                 this._rawLeft = left;
                 left = enchant.widget.parseContent(left);
                 if (this._left) {
@@ -3010,10 +2908,10 @@
          * @type {*}
          */
         right: {
-            get: function() {
+            get: function () {
                 return this._rawRight;
             },
-            set: function(right) {
+            set: function (right) {
                 this._rawRight = right;
                 right = enchant.widget.parseContent(right);
                 if (this._right) {
@@ -3025,9 +2923,8 @@
             }
         }
     });
-
     enchant.widget.Icon = enchant.Class.create(enchant.widget.EntityGroup, {
-        initialize: function(icon, text) {
+        initialize: function (icon, text) {
             enchant.widget.EntityGroup.call(this, 44, 44);
             icon = enchant.widget.parseContent(icon);
             text = enchant.widget.parseContent(text, enchant.widget._env.font);
@@ -3040,7 +2937,6 @@
             this.addChild(text);
         }
     });
-
     /**
      * @scope enchant.widget.IconMenu
      */
@@ -3051,7 +2947,7 @@
          * @constructs
          * @extends enchant.widget.EntityGroup
          */
-        initialize: function(buttons) {
+        initialize: function (buttons) {
             var core = enchant.Core.instance;
             if (!(buttons instanceof Array)) {
                 buttons = Array.prototype.slice.call(arguments);
@@ -3061,7 +2957,7 @@
             this._icons = [];
             this.content = buttons;
             this.refresh();
-            this._bgs.forEach(function(bg) {
+            this._bgs.forEach(function (bg) {
                 var width = bg.width;
                 var height = bg.height;
                 var np = new enchant.widget.Ninepatch(width, height);
@@ -3072,7 +2968,7 @@
         /**
          * Renew change.
          */
-        getSelectedItem: function(e) {
+        getSelectedItem: function (e) {
             var x = e.localX;
             var list = this._bgs;
             var child;
@@ -3086,13 +2982,12 @@
             }
             return null;
         },
-        refresh: function() {
+        refresh: function () {
             var icon, bg, bgwidth;
             var margin = enchant.widget._env.listItemMargin;
             var arr = distribute(this.width, this._icons.length);
             var _width = 0;
             var menu = this;
-
             for (var i = 0, l = this._icons.length; i < l; i++) {
                 bgwidth = arr[i];
                 icon = this._icons[i];
@@ -3101,14 +2996,13 @@
                 bg.height = this.height;
                 bg.image.resize(bg.width, bg.height);
                 bg.x = _width;
-
-                icon.addEventListener(enchant.Event.TOUCH_END, (function(bg) {
-                    return function(e) {
+                icon.addEventListener(enchant.Event.TOUCH_END, (function (bg) {
+                    return function (e) {
                         bg.dispatchEvent(e);
                     };
                 })(bg));
-                bg.addEventListener(enchant.Event.TOUCH_END, (function(i, elem) {
-                    return function(e) {
+                bg.addEventListener(enchant.Event.TOUCH_END, (function (i, elem) {
+                    return function (e) {
                         var evt = new enchant.Event(enchant.Event.TAP);
                         evt.x = e.x;
                         evt.y = e.y;
@@ -3117,14 +3011,12 @@
                         menu.dispatchEvent(evt);
                     };
                 })(i, icon));
-
                 icon.alignHorizontalCenterIn(bg).alignVerticalCenterIn(bg);
                 icon.x += _width;
-
                 _width += bg.width;
             }
         },
-        addChild: function(child) {
+        addChild: function (child) {
             var core = enchant.Core.instance;
             var addChild = enchant.widget.EntityGroup.prototype.addChild;
             var size = enchant.widget._env.itemHeight;
@@ -3138,7 +3030,7 @@
             sp.image = np;
             this.refresh();
         },
-        insertBefore: function(child, target) {
+        insertBefore: function (child, target) {
             var core = enchant.Core.instance;
             var insertBefore = enchant.widget.EntityGroup.prototype.insertBefore;
             var i = this._icons.indexOf(target);
@@ -3157,7 +3049,7 @@
                 this.refresh();
             }
         },
-        removeChild: function(child) {
+        removeChild: function (child) {
             var removeChild = enchant.widget.EntityGroup.prototype.removeChild;
             var i = this._icons.indexOf(child);
             if (i != -1) {
@@ -3174,22 +3066,22 @@
          * @param {enchant.Entity[]} content Array for object you wish to display.
          */
         content: {
-            get: function() {
+            get: function () {
                 return this._icons;
             },
-            set: function(content) {
+            set: function (content) {
                 var removeChild = enchant.widget.EntityGroup.prototype.removeChild;
                 var menu = this;
                 if (this.childNodes) {
-                    this.childNodes.slice().forEach(function(child) {
+                    this.childNodes.slice().forEach(function (child) {
                         removeChild.call(menu, child);
                     });
                 }
-                content.forEach(function(child) {
+                content.forEach(function (child) {
                     menu.addChild(child);
                 });
             }
         }
     });
-
 })();
+//# sourceMappingURL=widget.enchant.js.map

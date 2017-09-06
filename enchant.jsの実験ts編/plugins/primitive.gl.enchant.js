@@ -8,40 +8,38 @@
  * @description
  * Primitive objects for gl.enchant.js
  */
-
-
 if (enchant.gl !== undefined) {
-    (function() {
+    (function () {
         enchant.gl.primitive = {};
         enchant.gl.primitive.Plane = enchant.Class.create(enchant.gl.Sprite3D, {
-            initialize: function(scale) {
+            initialize: function (scale) {
                 enchant.gl.Sprite3D.call(this);
                 this.mesh = enchant.gl.Mesh.createPlane(scale);
             }
         });
         enchant.gl.primitive.PlaneXY = enchant.Class.create(enchant.gl.Sprite3D, {
-            initialize: function(scale) {
+            initialize: function (scale) {
                 enchant.gl.Sprite3D.call(this);
                 this.mesh = enchant.gl.Mesh.createPlaneXY(scale);
             }
         });
         enchant.gl.primitive.PlaneYZ = enchant.Class.create(enchant.gl.Sprite3D, {
-            initialize: function(scale) {
+            initialize: function (scale) {
                 enchant.gl.Sprite3D.call(this);
                 this.mesh = enchant.gl.Mesh.createPlaneYZ(scale);
             }
         });
         enchant.gl.primitive.PlaneXZ = enchant.Class.create(enchant.gl.Sprite3D, {
-            initialize: function(scale) {
+            initialize: function (scale) {
                 enchant.gl.Sprite3D.call(this);
                 this.mesh = enchant.gl.Mesh.createPlaneXZ(scale);
             }
         });
         enchant.gl.primitive.Billboard = enchant.Class.create(enchant.gl.primitive.Plane, {
-            initialize: function(scale) {
+            initialize: function (scale) {
                 var core = enchant.Core.instance;
                 enchant.gl.primitive.Plane.call(this, scale);
-                this.addEventListener('enterframe', function() {
+                this.addEventListener('enterframe', function () {
                     if (core.currentScene3D._camera) {
                         this.rotation = core.currentScene3D._camera.invMat;
                     }
@@ -49,20 +47,21 @@ if (enchant.gl !== undefined) {
             }
         });
         enchant.gl.primitive.BillboardAnimation = enchant.Class.create(enchant.gl.primitive.Billboard, {
-            initialize: function(divide, scale) {
+            initialize: function (divide, scale) {
                 enchant.gl.primitive.Billboard.call(this, scale);
                 if (typeof divide !== 'undefined') {
                     this.divide = divide;
-                } else {
+                }
+                else {
                     this.divide = 4;
                 }
                 this.frame = 0;
             },
             frame: {
-                get: function() {
+                get: function () {
                     return this._frame;
                 },
-                set: function(frame) {
+                set: function (frame) {
                     this._frame = frame;
                     var left = (frame % this.divide) / this.divide;
                     var top = 1 - ((frame / this.divide) | 0) / this.divide;
@@ -82,10 +81,10 @@ if (enchant.gl !== undefined) {
             }
         });
         enchant.gl.primitive.BillboardY = enchant.Class.create(enchant.gl.primitive.Plane, {
-            initialize: function(scale) {
+            initialize: function (scale) {
                 var core = enchant.Core.instance;
                 enchant.gl.primitive.Plane.call(this, scale);
-                this.addEventListener('render', function() {
+                this.addEventListener('render', function () {
                     if (core.currentScene3D._camera) {
                         this.rotation = core.currentScene3D._camera.invMatY;
                     }
@@ -93,38 +92,37 @@ if (enchant.gl !== undefined) {
             }
         });
         enchant.gl.primitive.Box = enchant.Class.create(enchant.gl.Sprite3D, {
-            initialize: function(sx, sy, sz) {
+            initialize: function (sx, sy, sz) {
                 enchant.gl.Sprite3D.call(this);
                 this.mesh = enchant.gl.Mesh.createBox(sx, sy, sz);
             }
         });
         enchant.gl.primitive.Cube = enchant.Class.create(enchant.gl.Sprite3D, {
-            initialize: function(scale) {
+            initialize: function (scale) {
                 enchant.gl.Sprite3D.call(this);
                 this.mesh = enchant.gl.Mesh.createCube(scale);
             }
         });
         enchant.gl.primitive.Sphere = enchant.Class.create(enchant.gl.Sprite3D, {
-            initialize: function(r, v, h) {
+            initialize: function (r, v, h) {
                 enchant.gl.Sprite3D.call(this);
                 this.mesh = enchant.gl.Mesh.createSphere(r, v, h);
             }
         });
         enchant.gl.primitive.Cylinder = enchant.Class.create(enchant.gl.Sprite3D, {
-            initialize: function(r, h, v) {
+            initialize: function (r, h, v) {
                 enchant.gl.Sprite3D.call(this);
                 this.mesh = enchant.gl.Mesh.createCylinder(r, h, v);
             }
         });
         enchant.gl.primitive.Torus = enchant.Class.create(enchant.gl.Sprite3D, {
-            initialize: function(r, r2, v, v2) {
+            initialize: function (r, r2, v, v2) {
                 enchant.gl.Sprite3D.call(this);
                 this.mesh = enchant.gl.Mesh.createTorus(r, r2, v, v2);
             }
         });
-
         var proto = Object.getPrototypeOf(enchant.gl.Mesh);
-        proto._createPlane = function(type, scale) {
+        proto._createPlane = function (type, scale) {
             if (typeof scale === 'undefined') {
                 scale = 0.5;
             }
@@ -136,7 +134,6 @@ if (enchant.gl !== undefined) {
                     0.0, -1.0, 1.0,
                     0.0, -1.0, -1.0,
                     0.0, 1.0, -1.0,
-
                     0.0, 1.0, 1.0,
                     0.0, -1.0, 1.0,
                     0.0, -1.0, -1.0,
@@ -147,19 +144,18 @@ if (enchant.gl !== undefined) {
                     1.0, 0.0, 0.0,
                     1.0, 0.0, 0.0,
                     1.0, 0.0, 0.0,
-
                     -1.0, 0.0, 0.0,
                     -1.0, 0.0, 0.0,
                     -1.0, 0.0, 0.0,
                     -1.0, 0.0, 0.0
                 ];
-            } else if (type === 'xz') {
+            }
+            else if (type === 'xz') {
                 vertices = [
                     1.0, 0.0, 1.0,
                     -1.0, 0.0, 1.0,
                     -1.0, 0.0, -1.0,
                     1.0, 0.0, -1.0,
-
                     1.0, 0.0, 1.0,
                     -1.0, 0.0, 1.0,
                     -1.0, 0.0, -1.0,
@@ -170,19 +166,18 @@ if (enchant.gl !== undefined) {
                     0.0, -1.0, 0.0,
                     0.0, -1.0, 0.0,
                     0.0, -1.0, 0.0,
-
                     0.0, 1.0, 0.0,
                     0.0, 1.0, 0.0,
                     0.0, 1.0, 0.0,
                     0.0, 1.0, 0.0
                 ];
-            } else {
+            }
+            else {
                 vertices = [
                     1.0, 1.0, 0.0,
                     -1.0, 1.0, 0.0,
                     -1.0, -1.0, 0.0,
                     1.0, -1.0, 0.0,
-
                     1.0, 1.0, 0.0,
                     -1.0, 1.0, 0.0,
                     -1.0, -1.0, 0.0,
@@ -193,7 +188,6 @@ if (enchant.gl !== undefined) {
                     0.0, 0.0, 1.0,
                     0.0, 0.0, 1.0,
                     0.0, 0.0, 1.0,
-
                     0.0, 0.0, -1.0,
                     0.0, 0.0, -1.0,
                     0.0, 0.0, -1.0,
@@ -209,7 +203,6 @@ if (enchant.gl !== undefined) {
                 1.0, 1.0, 1.0, 1.0,
                 1.0, 1.0, 1.0, 1.0,
                 1.0, 1.0, 1.0, 1.0,
-
                 1.0, 1.0, 1.0, 1.0,
                 1.0, 1.0, 1.0, 1.0,
                 1.0, 1.0, 1.0, 1.0,
@@ -220,7 +213,6 @@ if (enchant.gl !== undefined) {
                 0.0, 1.0,
                 0.0, 0.0,
                 1.0, 0.0,
-
                 1.0, 1.0,
                 0.0, 1.0,
                 0.0, 0.0,
@@ -234,19 +226,19 @@ if (enchant.gl !== undefined) {
             ];
             return mesh;
         };
-        proto.createPlane = function(scale) {
+        proto.createPlane = function (scale) {
             return this._createPlane('xy', scale);
         };
-        proto.createPlaneXY = function(scale) {
+        proto.createPlaneXY = function (scale) {
             return this._createPlane('xy', scale);
         };
-        proto.createPlaneYZ = function(scale) {
+        proto.createPlaneYZ = function (scale) {
             return this._createPlane('yz', scale);
         };
-        proto.createPlaneXZ = function(scale) {
+        proto.createPlaneXZ = function (scale) {
             return this._createPlane('xz', scale);
         };
-        proto.createBox = function(sx, sy, sz) {
+        proto.createBox = function (sx, sy, sz) {
             if (typeof sx === 'undefined') {
                 sx = 0.5;
             }
@@ -262,27 +254,22 @@ if (enchant.gl !== undefined) {
                 -1.0, 1.0, 1.0,
                 -1.0, -1.0, 1.0,
                 1.0, -1.0, 1.0,
-
                 1.0, 1.0, -1.0,
                 -1.0, 1.0, -1.0,
                 -1.0, -1.0, -1.0,
                 1.0, -1.0, -1.0,
-
                 1.0, 1.0, 1.0,
                 -1.0, 1.0, 1.0,
                 -1.0, 1.0, -1.0,
                 1.0, 1.0, -1.0,
-
                 1.0, -1.0, 1.0,
                 -1.0, -1.0, 1.0,
                 -1.0, -1.0, -1.0,
                 1.0, -1.0, -1.0,
-
                 1.0, 1.0, 1.0,
                 1.0, -1.0, 1.0,
                 1.0, -1.0, -1.0,
                 1.0, 1.0, -1.0,
-
                 -1.0, 1.0, 1.0,
                 -1.0, -1.0, 1.0,
                 -1.0, -1.0, -1.0,
@@ -294,33 +281,27 @@ if (enchant.gl !== undefined) {
                 vertices[i + 2] *= sz;
             }
             mesh.vertices = vertices;
-
             mesh.colors = [
                 1.0, 1.0, 1.0, 1.0,
                 1.0, 1.0, 1.0, 1.0,
                 1.0, 1.0, 1.0, 1.0,
                 1.0, 1.0, 1.0, 1.0,
-
                 1.0, 1.0, 1.0, 1.0,
                 1.0, 1.0, 1.0, 1.0,
                 1.0, 1.0, 1.0, 1.0,
                 1.0, 1.0, 1.0, 1.0,
-
                 1.0, 1.0, 1.0, 1.0,
                 1.0, 1.0, 1.0, 1.0,
                 1.0, 1.0, 1.0, 1.0,
                 1.0, 1.0, 1.0, 1.0,
-
                 1.0, 1.0, 1.0, 1.0,
                 1.0, 1.0, 1.0, 1.0,
                 1.0, 1.0, 1.0, 1.0,
                 1.0, 1.0, 1.0, 1.0,
-
                 1.0, 1.0, 1.0, 1.0,
                 1.0, 1.0, 1.0, 1.0,
                 1.0, 1.0, 1.0, 1.0,
                 1.0, 1.0, 1.0, 1.0,
-
                 1.0, 1.0, 1.0, 1.0,
                 1.0, 1.0, 1.0, 1.0,
                 1.0, 1.0, 1.0, 1.0,
@@ -357,27 +338,22 @@ if (enchant.gl !== undefined) {
                 0.0, 0.0,
                 0.0, 1.0,
                 1.0, 1.0,
-
                 1.0, 0.0,
                 0.0, 0.0,
                 0.0, 1.0,
                 1.0, 1.0,
-
                 1.0, 0.0,
                 0.0, 0.0,
                 0.0, 1.0,
                 1.0, 1.0,
-
                 1.0, 0.0,
                 0.0, 0.0,
                 0.0, 1.0,
                 1.0, 1.0,
-
                 1.0, 0.0,
                 0.0, 0.0,
                 0.0, 1.0,
                 1.0, 1.0,
-
                 1.0, 0.0,
                 0.0, 0.0,
                 0.0, 1.0,
@@ -386,19 +362,14 @@ if (enchant.gl !== undefined) {
             var a = [
                 0, 1, 2,
                 2, 3, 0,
-
                 2, 1, 0,
                 0, 3, 2,
-
                 2, 1, 0,
                 0, 3, 2,
-
                 0, 1, 2,
                 2, 3, 0,
-
                 0, 1, 2,
                 2, 3, 0,
-
                 2, 1, 0,
                 0, 3, 2
             ];
@@ -408,10 +379,10 @@ if (enchant.gl !== undefined) {
             mesh.indices = a;
             return mesh;
         };
-        proto.createCube = function(s) {
+        proto.createCube = function (s) {
             return this.createBox(s, s, s);
         };
-        proto.createSphere = function(r, h, v) {
+        proto.createSphere = function (r, h, v) {
             var i, j, l;
             if (typeof r === 'undefined') {
                 r = 1;
@@ -443,7 +414,6 @@ if (enchant.gl !== undefined) {
             mesh.colors = colors;
             mesh.normals = vertices.slice(0);
             var indices = [];
-
             for (i = 0; i < v - 1; i++) {
                 for (j = 0; j < h; j++) {
                     indices[indices.length] = h * (i + 1) + j;
@@ -457,7 +427,7 @@ if (enchant.gl !== undefined) {
             mesh.indices = indices;
             return mesh;
         };
-        proto.createCylinder = function(r, h, v) {
+        proto.createCylinder = function (r, h, v) {
             if (typeof r === 'undefined') {
                 r = 0.5;
             }
@@ -474,72 +444,54 @@ if (enchant.gl !== undefined) {
             vertices[vertices.length] = 0;
             vertices[vertices.length] = h;
             vertices[vertices.length] = 0;
-
             normals[normals.length] = 0;
             normals[normals.length] = 1;
             normals[normals.length] = 0;
-
             texCoords[texCoords.length] = 0;
             texCoords[texCoords.length] = 1;
-
             vertices[vertices.length] = 0;
             vertices[vertices.length] = -h;
             vertices[vertices.length] = 0;
-
             normals[normals.length] = 0;
             normals[normals.length] = -1;
             normals[normals.length] = 0;
-
             texCoords[texCoords.length] = 0;
             texCoords[texCoords.length] = 0;
-
             var cos = 0;
             var sin = 0;
             for (var i = 0; i < v; i++) {
                 cos = Math.cos(Math.PI * 2 * i / (v - 1));
                 sin = Math.sin(Math.PI * 2 * i / (v - 1));
-
                 vertices[vertices.length] = cos * r;
                 vertices[vertices.length] = h;
                 vertices[vertices.length] = sin * r;
-
                 normals[normals.length] = 0;
                 normals[normals.length] = 1;
                 normals[normals.length] = 0;
-
                 texCoords[texCoords.length] = i / (v - 1);
                 texCoords[texCoords.length] = 1;
-
                 vertices[vertices.length] = cos * r;
                 vertices[vertices.length] = -h;
                 vertices[vertices.length] = sin * r;
-
                 normals[normals.length] = 0;
                 normals[normals.length] = -1;
                 normals[normals.length] = 0;
-
                 texCoords[texCoords.length] = i / (v - 1);
                 texCoords[texCoords.length] = 0;
-
                 vertices[vertices.length] = cos * r;
                 vertices[vertices.length] = h;
                 vertices[vertices.length] = sin * r;
-
                 normals[normals.length] = cos;
                 normals[normals.length] = 0;
                 normals[normals.length] = sin;
-
                 texCoords[texCoords.length] = i / (v - 1);
                 texCoords[texCoords.length] = 1;
-
                 vertices[vertices.length] = cos * r;
                 vertices[vertices.length] = -h;
                 vertices[vertices.length] = sin * r;
-
                 normals[normals.length] = cos;
                 normals[normals.length] = 0;
                 normals[normals.length] = sin;
-
                 texCoords[texCoords.length] = i / (v - 1);
                 texCoords[texCoords.length] = 0;
             }
@@ -550,7 +502,6 @@ if (enchant.gl !== undefined) {
                 indices[indices.length] = 1;
                 indices[indices.length] = 2 + i * 4 + 1;
                 indices[indices.length] = 2 + i * 4 + 5;
-
                 indices[indices.length] = 2 + i * 4 + 2;
                 indices[indices.length] = 2 + i * 4 + 6;
                 indices[indices.length] = 2 + i * 4 + 3;
@@ -558,7 +509,6 @@ if (enchant.gl !== undefined) {
                 indices[indices.length] = 2 + i * 4 + 7;
                 indices[indices.length] = 2 + i * 4 + 3;
             }
-
             var mesh = new enchant.gl.Mesh();
             mesh.vertices = vertices;
             mesh.indices = indices;
@@ -567,7 +517,7 @@ if (enchant.gl !== undefined) {
             mesh.setBaseColor('#ffffff');
             return mesh;
         };
-        proto.createTorus = function(r, r2, v, v2) {
+        proto.createTorus = function (r, r2, v, v2) {
             var i, j;
             if (typeof r === 'undefined') {
                 r = 1.0;
@@ -635,8 +585,8 @@ if (enchant.gl !== undefined) {
             mesh.texCoords = texCoords;
             mesh.indices = indices;
             mesh.setBaseColor('#ffffff');
-
             return mesh;
         };
     }());
 }
+//# sourceMappingURL=primitive.gl.enchant.js.map

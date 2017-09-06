@@ -9,39 +9,32 @@
  * Library for making game for Nintendo wii U
  * ("Wii U" is registered trademark of Nintendo,Inc.)
  */
-
 /**
  * plugin namespace object
  * @namespace
  * @type {Object}
  */
 enchant.wiiu = {};
-
 enchant.Event.L_STICK_MOVE = 'lstickmove';
 enchant.Event.R_STICK_MOVE = 'rstickmove';
 enchant.Event.DEVICE_MOTION = 'devicemotion';
 enchant.Event.DEVICE_ORIENTATION = 'deviceorientation';
-
 enchant.wiiu.Core = enchant.Class.create(enchant.Core, {
-    initialize: function() {
+    initialize: function () {
         alert("width: " + window.innerWidth + " height: " + window.innerHeight);
         enchant.Core.apply(this, arguments);
-
         var label = new Label("");
         this.rootScene.addChild(label);
-        var debug = function(str) {
+        var debug = function (str) {
             label.text += str + '<br />';
         };
-
         /**
          * disable default keybind
          */
         this._keybind = {};
-
         var touched = false;
         var prevData = {};
         var pushed = {};
-
         var keyEventTable = {
             'a': 0x8000,
             'b': 0x4000,
@@ -57,15 +50,13 @@ enchant.wiiu.Core = enchant.Class.create(enchant.Core, {
             'left': 0x0400
         };
         var core = this;
-        core.input.rstick = {x: 0, y: 0};
-        core.input.lstick = {x: 0, y: 0};
-
+        core.input.rstick = { x: 0, y: 0 };
+        core.input.lstick = { x: 0, y: 0 };
         debug('wiiu?' + (window.wiiu ? "on" : "off"));
-        for(var i in window.wiiu){
+        for (var i in window.wiiu) {
         }
-
         if (window.wiiu) {
-            core.addEventListener("enterframe", function() {
+            core.addEventListener("enterframe", function () {
                 /**
                  * watch data from wiiU controller
                  */
@@ -73,27 +64,22 @@ enchant.wiiu.Core = enchant.Class.create(enchant.Core, {
                 if (!data.isEnabled) {
                     console.log('Wii U Gamepad is not connected');
                 }
-
                 var evt, target;
-
                 core.input = {};
-
                 if (data.lStickX !== prevData.lStickX || data.lStickY !== prevData.lStickY) {
                     evt = new enchant.Event(enchant.Event.L_STICK_MOVE);
                     evt.x = data.lStickX;
                     evt.y = -data.lStickY;
                     core.dispatchEvent(evt);
                 }
-                core.input['lstick'] = {x: data.lStickX, y: -data.lStickY};
-
+                core.input['lstick'] = { x: data.lStickX, y: -data.lStickY };
                 if (data.rStickX !== prevData.rStickX || data.rStickY !== prevData.rStickY) {
                     evt = new enchant.Event(enchant.Event.R_STICK_MOVE);
                     evt.x = data.rStickX;
                     evt.y = -data.rStickY;
                     core.dispatchEvent(evt);
                 }
-                core.input['rstick'] = {x: data.rStickX, y: -data.rStickY};
-
+                core.input['rstick'] = { x: data.rStickX, y: -data.rStickY };
                 evt = new enchant.Event(enchant.Event.DEVICE_MOTION);
                 core.input['acc'] = {
                     x: evt.x = data.accX,
@@ -101,7 +87,6 @@ enchant.wiiu.Core = enchant.Class.create(enchant.Core, {
                     z: evt.z = data.accZ
                 };
                 core.rootScene.dispatchEvent(evt);
-
                 evt = new enchant.Event(enchant.Event.DEVICE_ORIENTATION);
                 core.input['angle'] = {
                     x: evt.x = data.angleX,
@@ -109,22 +94,21 @@ enchant.wiiu.Core = enchant.Class.create(enchant.Core, {
                     z: evt.z = data.angleZ
                 };
                 core.rootScene.dispatchEvent(evt);
-
-                for(var type in keyEventTable){
-                    if(keyEventTable.hasOwnProperty(type)){
+                for (var type in keyEventTable) {
+                    if (keyEventTable.hasOwnProperty(type)) {
                         var bitmask = keyEventTable[type];
                         var hold = data.hold & bitmask;
-
-                        if(hold && !core.input[type]){
+                        if (hold && !core.input[type]) {
                             // Button data: On, Flag: Off -> buttondown
                             core.input[type] = true;
                             evt = new enchant.Event(type + 'buttondown');
                             this.dispatchEvent(evt);
                             debug(type + 'buttondown');
-                        }else if(!hold && core.input[type]){
+                        }
+                        else if (!hold && core.input[type]) {
                             // Button data: On, Flag: Off -> buttonup
                             delete core.input[type];
-                            evt = new enchant.Event(type  + 'buttonup');
+                            evt = new enchant.Event(type + 'buttonup');
                             this.dispatchEvent(evt);
                             debug(type + 'buttondown');
                         }
@@ -132,9 +116,10 @@ enchant.wiiu.Core = enchant.Class.create(enchant.Core, {
                 }
                 prevData = data;
             });
-        } else {
+        }
+        else {
             console.log('This browser is not wiiU browser.');
         }
-
     }
 });
+//# sourceMappingURL=wiiu.enchant.js.map

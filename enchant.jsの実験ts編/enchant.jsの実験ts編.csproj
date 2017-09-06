@@ -167,6 +167,7 @@
     <Folder Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
+    <TypeScriptCompile Include="enchant.js.d.ts" />
     <TypeScriptCompile Include="game1\main.ts" />
     <TypeScriptCompile Include="Example\main.ts" />
   </ItemGroup>

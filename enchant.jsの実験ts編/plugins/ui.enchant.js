@@ -43,12 +43,10 @@
  *      var button_blue = new Button("Press me", "blue");
  *      core.rootScene.addEventListener(button);
  */
-
 /**
  * @type {Object}
  */
 enchant.ui = { assets: ['pad.png', 'apad.png', 'icon0.png', 'font0.png'] };
-
 /**
  * 方向キーパッドのクラス: Pad
  * @scope enchant.ui.Pad
@@ -59,23 +57,23 @@ enchant.ui.Pad = enchant.Class.create(enchant.Sprite, {
      * @constructs
      * @extends enchant.Sprite
      */
-    initialize: function() {
+    initialize: function () {
         var core = enchant.Core.instance;
         var image = core.assets['pad.png'];
         enchant.Sprite.call(this, image.width / 2, image.height);
         this.image = image;
         this.input = { left: false, right: false, up: false, down: false };
-        this.addEventListener('touchstart', function(e) {
+        this.addEventListener('touchstart', function (e) {
             this._updateInput(this._detectInput(e.localX, e.localY));
         });
-        this.addEventListener('touchmove', function(e) {
+        this.addEventListener('touchmove', function (e) {
             this._updateInput(this._detectInput(e.localX, e.localY));
         });
-        this.addEventListener('touchend', function(e) {
+        this.addEventListener('touchend', function (e) {
             this._updateInput({ left: false, right: false, up: false, down: false });
         });
     },
-    _detectInput: function(x, y) {
+    _detectInput: function (x, y) {
         x -= this.width / 2;
         y -= this.height / 2;
         var input = { left: false, right: false, up: false, down: false };
@@ -95,9 +93,9 @@ enchant.ui.Pad = enchant.Class.create(enchant.Sprite, {
         }
         return input;
     },
-    _updateInput: function(input) {
+    _updateInput: function (input) {
         var core = enchant.Core.instance;
-        ['left', 'right', 'up', 'down'].forEach(function(type) {
+        ['left', 'right', 'up', 'down'].forEach(function (type) {
             if (this.input[type] && !input[type]) {
                 core.dispatchEvent(new enchant.Event(type + 'buttonup'));
             }
@@ -108,7 +106,6 @@ enchant.ui.Pad = enchant.Class.create(enchant.Sprite, {
         this.input = input;
     }
 });
-
 /**
  * アナログパッドのクラス: APad
  * @scope enchant.ui.APad
@@ -122,13 +119,12 @@ enchant.ui.APad = enchant.Class.create(enchant.Group, {
      *   'direct': 入力ベクトルは正規化されない (大きさは 0~1 の間)
      *   'normal': 入力ベクトルを常に正規化する (大きさは常に1となる)
      */
-    initialize: function(mode) {
+    initialize: function (mode) {
         var core = enchant.Core.instance;
         var image = core.assets['apad.png'];
         var w = this.width = image.width;
         var h = this.height = image.height;
         enchant.Group.call(this);
-
         this.outside = new enchant.Sprite(w, h);
         var outsideImage = new enchant.Surface(w, h);
         outsideImage.draw(image, 0, 0, w, h / 4, 0, 0, w, h / 4);
@@ -141,14 +137,12 @@ enchant.ui.APad = enchant.Class.create(enchant.Group, {
         insideImage.draw(image, w / 4, h / 4, w / 2, h / 2, 0, 0, w / 2, h / 2);
         this.inside.image = insideImage;
         this.r = w / 2;
-
         /**
          * isTouched
          * @type {Boolean}
          * タッチされているかどうか
          */
         this.isTouched = false;
-
         /**
          * vx, vy
          * @type {Number}
@@ -156,7 +150,6 @@ enchant.ui.APad = enchant.Class.create(enchant.Group, {
          */
         this.vx = 0;
         this.vy = 0;
-
         /**
          * rad, dist
          * @type {Number}
@@ -165,29 +158,29 @@ enchant.ui.APad = enchant.Class.create(enchant.Group, {
          */
         this.rad = 0;
         this.dist = 0;
-
         if (mode === 'direct') {
             this.mode = 'direct';
-        } else {
+        }
+        else {
             this.mode = 'normal';
         }
         this._updateImage();
         this.addChild(this.inside);
         this.addChild(this.outside);
-        this.addEventListener('touchstart', function(e) {
+        this.addEventListener('touchstart', function (e) {
             this._detectInput(e.localX, e.localY);
             this._calcPolar(e.localX, e.localY);
             this._updateImage(e.localX, e.localY);
             this._dispatchPadEvent('apadstart');
             this.isTouched = true;
         });
-        this.addEventListener('touchmove', function(e) {
+        this.addEventListener('touchmove', function (e) {
             this._detectInput(e.localX, e.localY);
             this._calcPolar(e.localX, e.localY);
             this._updateImage(e.localX, e.localY);
             this._dispatchPadEvent('apadmove');
         });
-        this.addEventListener('touchend', function(e) {
+        this.addEventListener('touchend', function (e) {
             this._detectInput(this.width / 2, this.height / 2);
             this._calcPolar(this.width / 2, this.height / 2);
             this._updateImage(this.width / 2, this.height / 2);
@@ -195,7 +188,7 @@ enchant.ui.APad = enchant.Class.create(enchant.Group, {
             this.isTouched = false;
         });
     },
-    _dispatchPadEvent: function(type) {
+    _dispatchPadEvent: function (type) {
         var e = new enchant.Event(type);
         e.vx = this.vx;
         e.vy = this.vy;
@@ -203,13 +196,13 @@ enchant.ui.APad = enchant.Class.create(enchant.Group, {
         e.dist = this.dist;
         this.dispatchEvent(e);
     },
-    _updateImage: function(x, y) {
+    _updateImage: function (x, y) {
         x -= this.width / 2;
         y -= this.height / 2;
         this.inside.x = this.vx * (this.r - 10) + 25;
         this.inside.y = this.vy * (this.r - 10) + 25;
     },
-    _detectInput: function(x, y) {
+    _detectInput: function (x, y) {
         x -= this.width / 2;
         y -= this.height / 2;
         var distance = Math.sqrt(x * x + y * y);
@@ -219,28 +212,33 @@ enchant.ui.APad = enchant.Class.create(enchant.Group, {
         if (distance === 0) {
             this.vx = 0;
             this.vy = 0;
-        } else if (x === 0) {
+        }
+        else if (x === 0) {
             this.vx = 0;
             if (this.mode === 'direct') {
                 this.vy = (y / this.r);
-            } else {
+            }
+            else {
                 dir = y / Math.abs(y);
                 this.vy = Math.pow((y / this.r), 2) * dir;
             }
-        } else if (distance < this.r) {
+        }
+        else if (distance < this.r) {
             if (this.mode === 'direct') {
                 this.vx = (x / this.r);
                 this.vy = (y / this.r);
-            } else {
+            }
+            else {
                 this.vx = Math.pow((distance / this.r), 2) * Math.cos(rad) * dir;
                 this.vy = Math.pow((distance / this.r), 2) * Math.sin(rad) * dir;
             }
-        } else {
+        }
+        else {
             this.vx = Math.cos(rad) * dir;
             this.vy = Math.sin(rad) * dir;
         }
     },
-    _calcPolar: function(x, y) {
+    _calcPolar: function (x, y) {
         x -= this.width / 2;
         y -= this.height / 2;
         var add = 0;
@@ -256,13 +254,16 @@ enchant.ui.APad = enchant.Class.create(enchant.Group, {
         if (x >= 0 && y < 0) {
             add = Math.PI / 2 * 3;
             rad = x / y;
-        } else if (x < 0 && y <= 0) {
+        }
+        else if (x < 0 && y <= 0) {
             add = Math.PI;
             rad = y / x;
-        } else if (x <= 0 && y > 0) {
+        }
+        else if (x <= 0 && y > 0) {
             add = Math.PI / 2;
             rad = x / y;
-        } else if (x > 0 && y >= 0) {
+        }
+        else if (x > 0 && y >= 0) {
             add = 0;
             rad = y / x;
         }
@@ -273,7 +274,6 @@ enchant.ui.APad = enchant.Class.create(enchant.Group, {
         this.dist = dist;
     }
 });
-
 /**
  * ボタンオブジェクトのクラス: Button
  * available in only DOMGroup
@@ -288,18 +288,15 @@ enchant.ui.Button = enchant.Class.create(enchant.Entity, {
      * @constructs
      * @extends enchant.Entity
      */
-    initialize: function(text, theme, height, width) {
+    initialize: function (text, theme, height, width) {
         enchant.Entity.call(this);
-
         if (enchant.CanvasLayer) {
             this._element = 'div';
         }
-
         this.width = width || null;
         this.height = height || null;
         this.text = text;
         this.pressed = false;
-
         // デフォルトのスタイル (テーマで上書き可能)
         var style = this._style;
         style["display"] = "inline-block";
@@ -311,36 +308,32 @@ enchant.ui.Button = enchant.Class.create(enchant.Entity, {
         style["text-align"] = "center";
         style["font-weight"] = "bold";
         style["border-radius"] = "0.5em";
-
         // テーマの指定がなければ "dark" を使う
         theme = theme || "dark";
-
         if (typeof theme === "string") {
             // theme 引数が string なら、その名前のデフォルトテーマを使う
             this.theme = enchant.ui.Button.DEFAULT_THEME[theme];
-        } else {
+        }
+        else {
             // theme 引数が object なら、その引数をテーマとして扱う
             this.theme = theme;
         }
-
         // テーマを適用する
         this._applyTheme(this.theme.normal);
-
         // タッチしたときの挙動
-        this.addEventListener("touchstart", function() {
+        this.addEventListener("touchstart", function () {
             this._applyTheme(this.theme.active);
             this.pressed = true;
             this.y++;
         });
-
         // タッチが離されたときの挙動
-        this.addEventListener("touchend", function() {
+        this.addEventListener("touchend", function () {
             this._applyTheme(this.theme.normal);
             this.pressed = false;
             this.y--;
         });
     },
-    _applyTheme: function(theme) {
+    _applyTheme: function (theme) {
         var style = this._style;
         var css = enchant.ui.Button.theme2css(theme);
         for (var i in css) {
@@ -354,11 +347,11 @@ enchant.ui.Button = enchant.Class.create(enchant.Entity, {
      * @type {String}
      */
     text: {
-        get: function() {
+        get: function () {
             return this._text;
         },
-        set: function(text) {
-                this._text = text;
+        set: function (text) {
+            this._text = text;
             if (!enchant.CanvasLayer) {
                 this._element.innerHTML = text;
             }
@@ -368,10 +361,10 @@ enchant.ui.Button = enchant.Class.create(enchant.Entity, {
      * フォントサイズ
      */
     size: {
-        get: function() {
+        get: function () {
             return this._style.fontSize;
         },
-        set: function(size) {
+        set: function (size) {
             this._style.fontSize = size;
         }
     },
@@ -380,10 +373,10 @@ enchant.ui.Button = enchant.Class.create(enchant.Entity, {
      * @type {String}
      */
     font: {
-        get: function() {
+        get: function () {
             return this._style.font;
         },
-        set: function(font) {
+        set: function (font) {
             this._style.font = font;
         }
     },
@@ -393,17 +386,17 @@ enchant.ui.Button = enchant.Class.create(enchant.Entity, {
      * @type {String}
      */
     color: {
-        get: function() {
+        get: function () {
             return this._style.color;
         },
-        set: function(color) {
+        set: function (color) {
             this._style.color = color;
         }
     },
-    cvsRender: function() {
+    cvsRender: function () {
         // not available now
     },
-    domRender: function() {
+    domRender: function () {
         var element = this._domManager.element;
         element.innerHTML = this._text;
         element.style.font = this._font;
@@ -411,8 +404,7 @@ enchant.ui.Button = enchant.Class.create(enchant.Entity, {
         element.style.textAlign = this._textAlign;
     }
 });
-
-enchant.ui.Button.theme2css = function(theme) {
+enchant.ui.Button.theme2css = function (theme) {
     var prefix = '-' + enchant.ENV.VENDOR_PREFIX.toLowerCase() + '-';
     var obj = {};
     var bg = theme.background;
@@ -421,8 +413,9 @@ enchant.ui.Button.theme2css = function(theme) {
     var bs = theme.boxShadow;
     if (prefix === '-ms-') {
         obj['background'] = bg.start;
-    } else {
-        obj['background-image'] = prefix + bg.type + '('+ [ 'top', bg.start, bg.end ] + ')';
+    }
+    else {
+        obj['background-image'] = prefix + bg.type + '(' + ['top', bg.start, bg.end] + ')';
     }
     obj['color'] = theme.color;
     obj['border'] = bd.color + ' ' + bd.width + ' ' + bd.type;
@@ -430,7 +423,6 @@ enchant.ui.Button.theme2css = function(theme) {
     obj['box-shadow'] = bs.offsetX + 'px ' + bs.offsetY + 'px ' + bs.blur + ' ' + bs.color;
     return obj;
 };
-
 enchant.ui.Button.DEFAULT_THEME = {
     dark: {
         normal: {
@@ -451,7 +443,7 @@ enchant.ui.Button.DEFAULT_THEME = {
     light: {
         normal: {
             color: '#333',
-            background: { type: 'linear-gradient', start: '#fff', end:'#ccc' },
+            background: { type: 'linear-gradient', start: '#fff', end: '#ccc' },
             border: { color: '#999', width: 1, type: 'solid' },
             textShadow: { offsetX: 0, offsetY: 1, blur: 0, color: '#fff' },
             boxShadow: { offsetX: 0, offsetY: 1, blur: 0, color: 'rgba(0, 0, 0, 1)' },
@@ -481,7 +473,6 @@ enchant.ui.Button.DEFAULT_THEME = {
         }
     }
 };
-
 /**
  * @scope enchant.ui.MutableText.prototype
  * @type {*}
@@ -499,7 +490,7 @@ enchant.ui.MutableText = enchant.Class.create(enchant.Sprite, {
      * @param posY
      * @param width
      */
-    initialize: function(x, y, width) {
+    initialize: function (x, y, width) {
         enchant.Sprite.call(this, 0, 0);
         this.fontSize = 16;
         this.widthItemNum = 16;
@@ -515,23 +506,26 @@ enchant.ui.MutableText = enchant.Class.create(enchant.Sprite, {
      * ラベルの内容を書き換える関数
      * @param txt
      */
-    setText: function(txt) {
+    setText: function (txt) {
         var i, x, y, wNum, charCode, charPos;
         this._text = txt;
         var newWidth;
         if (!this.returnLength) {
             this.width = Math.min(this.fontSize * this._text.length, enchant.Game.instance.width);
-        } else {
+        }
+        else {
             this.width = Math.min(this.returnLength * this.fontSize, enchant.Game.instance.width);
         }
         this.height = this.fontSize * (Math.ceil(this._text.length / this.row) || 1);
         // if image is to small or was to big for a long time create new image
-        if(!this.image || this.width > this.image.width || this.height > this.image.height || this._imageAge > 300) {
+        if (!this.image || this.width > this.image.width || this.height > this.image.height || this._imageAge > 300) {
             this.image = new enchant.Surface(this.width, this.height);
             this._imageAge = 0;
-        } else if(this.width < this.image.width || this.height < this.image.height) {
+        }
+        else if (this.width < this.image.width || this.height < this.image.height) {
             this._imageAge++;
-        } else {
+        }
+        else {
             this._imageAge = 0;
         }
         this.image.context.clearRect(0, 0, this.width, this.height);
@@ -539,14 +533,13 @@ enchant.ui.MutableText = enchant.Class.create(enchant.Sprite, {
             charCode = txt.charCodeAt(i);
             if (charCode >= 32 && charCode <= 127) {
                 charPos = charCode - 32;
-            } else {
+            }
+            else {
                 charPos = 0;
             }
             x = charPos % this.widthItemNum;
             y = (charPos / this.widthItemNum) | 0;
-            this.image.draw(enchant.Game.instance.assets['font0.png'],
-                x * this.fontSize, y * this.fontSize, this.fontSize, this.fontSize,
-                (i % this.row) * this.fontSize, ((i / this.row) | 0) * this.fontSize, this.fontSize, this.fontSize);
+            this.image.draw(enchant.Game.instance.assets['font0.png'], x * this.fontSize, y * this.fontSize, this.fontSize, this.fontSize, (i % this.row) * this.fontSize, ((i / this.row) | 0) * this.fontSize, this.fontSize, this.fontSize);
         }
     },
     /**
@@ -554,10 +547,10 @@ enchant.ui.MutableText = enchant.Class.create(enchant.Sprite, {
      * @type {String}
      */
     text: {
-        get: function() {
+        get: function () {
             return this._text;
         },
-        set: function(txt) {
+        set: function (txt) {
             this.setText(txt);
         }
     },
@@ -565,16 +558,15 @@ enchant.ui.MutableText = enchant.Class.create(enchant.Sprite, {
      * @type {Number}
      */
     row: {
-        get: function() {
+        get: function () {
             return this.returnLength || this.width / this.fontSize;
         },
-        set: function(row) {
+        set: function (row) {
             this.returnLength = row;
             this.text = this.text;
         }
     }
 });
-
 /**
  * @scope enchant.ui.ScoreLabel.prototype
  * @type {*}
@@ -587,7 +579,7 @@ enchant.ui.ScoreLabel = enchant.Class.create(enchant.ui.MutableText, {
      * @param x
      * @param y
      */
-    initialize: function(x, y) {
+    initialize: function (x, y) {
         enchant.ui.MutableText.call(this, 0, 0);
         switch (arguments.length) {
             case 2:
@@ -604,10 +596,11 @@ enchant.ui.ScoreLabel = enchant.Class.create(enchant.ui.MutableText, {
         this._current = 0;
         this.easing = 2.5;
         this.text = this.label = 'SCORE:';
-        this.addEventListener('enterframe', function() {
+        this.addEventListener('enterframe', function () {
             if (this.easing === 0) {
                 this.text = this.label + (this._current = this._score);
-            } else {
+            }
+            else {
                 this._current += Math.ceil((this._score - this._current) / this.easing);
                 this.text = this.label + this._current;
             }
@@ -618,15 +611,14 @@ enchant.ui.ScoreLabel = enchant.Class.create(enchant.ui.MutableText, {
      * @type {Number}
      */
     score: {
-        get: function() {
+        get: function () {
             return this._score;
         },
-        set: function(newscore) {
+        set: function (newscore) {
             this._score = newscore;
         }
     }
 });
-
 /**
  * @type {*}
  * @scope enchant.ui.TimeLabel.prototype
@@ -639,7 +631,7 @@ enchant.ui.TimeLabel = enchant.Class.create(enchant.ui.MutableText, {
      * @param y
      * @param counttype
      */
-    initialize: function(x, y, counttype) {
+    initialize: function (x, y, counttype) {
         enchant.ui.MutableText.call(this, 0, 0);
         switch (arguments.length) {
             case 3:
@@ -654,12 +646,12 @@ enchant.ui.TimeLabel = enchant.Class.create(enchant.ui.MutableText, {
                 break;
         }
         this._time = 0;
-        this._count = 1;// この数を毎フレーム每に足して上げ下げを制御する
+        this._count = 1; // この数を毎フレーム每に足して上げ下げを制御する
         if (counttype === 'countdown') {
             this._count = -1;
         }
         this.text = this.label = 'TIME:';
-        this.addEventListener('enterframe', function() {
+        this.addEventListener('enterframe', function () {
             this._time += this._count;
             this.text = this.label + (this._time / enchant.Game.instance.fps).toFixed(2);
         });
@@ -669,15 +661,14 @@ enchant.ui.TimeLabel = enchant.Class.create(enchant.ui.MutableText, {
      * @type {Number}
      */
     time: {
-        get: function() {
+        get: function () {
             return Math.floor(this._time / enchant.Game.instance.fps);
         },
-        set: function(newtime) {
+        set: function (newtime) {
             this._time = newtime * enchant.Game.instance.fps;
         }
     }
 });
-
 /**
  * @type {*}
  * @scope enchant.ui.LifeLabel.prototype
@@ -691,7 +682,7 @@ enchant.ui.LifeLabel = enchant.Class.create(enchant.Group, {
      * @param y
      * @param maxlife
      */
-    initialize: function(x, y, maxlife) {
+    initialize: function (x, y, maxlife) {
         enchant.Group.call(this);
         this.x = x || 0;
         this.y = y || 0;
@@ -715,10 +706,10 @@ enchant.ui.LifeLabel = enchant.Class.create(enchant.Group, {
      * @type {Number}
      */
     life: {
-        get: function() {
+        get: function () {
             return this._life;
         },
-        set: function(newlife) {
+        set: function (newlife) {
             this._life = newlife;
             if (this._maxlife < newlife) {
                 this._life = this._maxlife;
@@ -729,7 +720,6 @@ enchant.ui.LifeLabel = enchant.Class.create(enchant.Group, {
         }
     }
 });
-
 /**
  * @scope enchant.ui.Bar
  * @type {*}
@@ -741,9 +731,9 @@ enchant.ui.Bar = enchant.Class.create(enchant.Sprite, {
      * @param x
      * @param y
      */
-    initialize: function(x, y) {
+    initialize: function (x, y) {
         enchant.Sprite.call(this, 1, 16);
-        this.image = new enchant.Surface(1, 16);// Null用
+        this.image = new enchant.Surface(1, 16); // Null用
         this.image.context.fillColor = 'RGB(0, 0, 256)';
         this.image.context.fillRect(0, 0, 1, 16);
         this._direction = 'right';
@@ -765,7 +755,7 @@ enchant.ui.Bar = enchant.Class.create(enchant.Sprite, {
             default:
                 break;
         }
-        this.addEventListener('enterframe', function() {
+        this.addEventListener('enterframe', function () {
             if (this.value < 0) {
                 this.value = 0;
             }
@@ -779,7 +769,8 @@ enchant.ui.Bar = enchant.Class.create(enchant.Sprite, {
             }
             if (this._direction === 'left') {
                 this._x = this._origin - this.width;
-            } else {
+            }
+            else {
                 this._x = this._origin;
             }
             this._updateCoordinate();
@@ -791,13 +782,13 @@ enchant.ui.Bar = enchant.Class.create(enchant.Sprite, {
      * @type {String}
      */
     direction: {
-        get: function() {
+        get: function () {
             return this._direction;
         },
-        set: function(newdirection) {
+        set: function (newdirection) {
             if (newdirection !== 'right' && newdirection !== 'left') {
-                // ignore
-            } else {
+            }
+            else {
                 this._direction = newdirection;
             }
         }
@@ -807,10 +798,10 @@ enchant.ui.Bar = enchant.Class.create(enchant.Sprite, {
      * @type {Number}
      */
     x: {
-        get: function() {
+        get: function () {
             return this._origin;
         },
-        set: function(x) {
+        set: function (x) {
             this._x = x;
             this._origin = x;
             this._dirty = true;
@@ -820,15 +811,14 @@ enchant.ui.Bar = enchant.Class.create(enchant.Sprite, {
      * @type {Number}
      */
     maxvalue: {
-        get: function() {
+        get: function () {
             return this._maxvalue;
         },
-        set: function(val) {
+        set: function (val) {
             this._maxvalue = val;
         }
     }
 });
-
 /**
  * @scope enchant.ui.VirtualMap.prototype
  */
@@ -856,7 +846,7 @@ enchant.ui.VirtualMap = enchant.Class.create(enchant.Group, {
      * @param meshHeight
      * @constructs
      */
-    initialize: function(meshWidth, meshHeight) {
+    initialize: function (meshWidth, meshHeight) {
         enchant.Group.call(this);
         this.meshWidth = meshWidth || 16;
         this.meshHeight = meshHeight || 16;
@@ -865,7 +855,7 @@ enchant.ui.VirtualMap = enchant.Class.create(enchant.Group, {
      * VirtualMap にオブジェクトを追加する (自動的にバインドされる)
      * @param obj
      */
-    addChild: function(obj) {
+    addChild: function (obj) {
         enchant.Group.prototype.addChild.call(this, obj);
         this.bind(obj);
     },
@@ -875,7 +865,7 @@ enchant.ui.VirtualMap = enchant.Class.create(enchant.Group, {
      * @param obj
      * @param reference
      */
-    insertBefore: function(obj, reference) {
+    insertBefore: function (obj, reference) {
         enchant.Group.prototype.insertBefore.call(this, obj, reference);
         this.bind(obj);
     },
@@ -885,21 +875,21 @@ enchant.ui.VirtualMap = enchant.Class.create(enchant.Group, {
      * VirtualMap の中を移動させることができる。
      * @param obj
      */
-    bind: function(obj) {
+    bind: function (obj) {
         Object.defineProperties(obj, {
             "mx": {
-                get: function() {
+                get: function () {
                     return Math.floor(this.x / this.parentNode.meshWidth);
                 },
-                set: function(arg) {
+                set: function (arg) {
                     this.x = Math.floor(arg * this.parentNode.meshWidth);
                 }
             },
             "my": {
-                get: function() {
+                get: function () {
                     return Math.floor(this.y / this.parentNode.meshHeight);
                 },
-                set: function(arg) {
+                set: function (arg) {
                     this.y = Math.floor(arg * this.parentNode.meshWidth);
                 }
             }
@@ -908,7 +898,7 @@ enchant.ui.VirtualMap = enchant.Class.create(enchant.Group, {
         obj.my = 0;
     }
 });
-
 function rand(num) {
     return Math.floor(Math.random() * num);
 }
+//# sourceMappingURL=ui.enchant.js.map

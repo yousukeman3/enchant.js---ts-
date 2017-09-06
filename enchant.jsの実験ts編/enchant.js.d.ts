@@ -18,76 +18,76 @@ declare module enchant {
         
         dispatchEvent(e: Event);
         
-		on(type:string, listener:(e:Event)=>any);
+        on(type: string, listener: (e: Event) => any);
 
 		removeEventListener(type:string, listener:(e:Event)=>any);
 	}
 
 	class Core extends EventTarget {
-		constructor(weight:number, height:number);
+        constructor(weight: number, height: number);
 
 		// field
-		assets(key:string):Surface;
+        assets(key: string): Surface;
 
-		currentScene:Scene;
-		fps:number;
-		frame:any;
-		height:any;
-		input:any;
-		static instance:Core;
-		loadingScene:Scene;
-		ready:any;
-		rootScene:Scene;
-		running:any;
-		scale:any;
-		width:any;
+        currentScene: Scene;
+        fps: number;
+        frame: any;
+        height: any;
+        input: any;
+        static instance: Core;
+        loadingScene: Scene;
+        ready: any;
+        rootScene: Scene;
+        running: any;
+        scale: any;
+        width: any;
 		// undocumented field
-		onload:Function;
+        onload: Function;
 
 		// method
-		addManager(childManager, nextManager);
+        addManager(childManager, nextManager);
 
 		debug();
 
-		static findExt(path):any;
+        static findExt(path): any;
 
-		getDomElement():any;
+        getDomElement(): any;
 
-		getDomElementAsNext():any;
+        getDomElementAsNext(): any;
 
-		getElapsedTime():number;
+        getElapsedTime(): number;
 
-		getNextManager(manager):any;
+        getNextManager(manager): any;
 
-		initialize(node);
+        initialize(node);
 
-		keybind(key:number, button:string);
+        keybind(key: number, button: string);
 
-		keyunbind(key:number);
+        keyunbind(key: number);
 
-		load(asset:string, callback?:Function);
+        load(asset: string, callback?: Function);
 
 		pause();
 
-		popScene():enchant.Scene;
+        popScene(): enchant.Scene;
 
-		preload(asset:string):any;
+        preload(asset: string): any;
 
-		preload(assets:string[]):any;
+        preload(assets: string[]): any;
 
-		preload(...assets:string[]):any;
+        preload(...assets: string[]): any;
 
-		pushScene(scene):Scene;
+        pushScene(scene): Scene;
 
 		remove();
 
-		removeManager(childManager);
+        removeManager(childManager);
 
-		removeScene(scene):enchant.Scene;
+        removeScene(scene): enchant.Scene;
 
 		render(inheritMat);
 
-		replaceScene(scene):enchant.Scene;
+        replaceScene(scene): enchant.Scene;
 
 		resume();
 
@@ -100,59 +100,59 @@ declare module enchant {
 
 	class Node extends EventTarget {
 		// field
-		age:number;
-		parentNode:Node;
-		scene:Scene;
-		x:number;
-		y:number;
+        age: number;
+        parentNode: Node;
+        scene: Scene;
+        x: number;
+        y: number;
 
-		tl:Timeline;
+        tl: Timeline;
 
 		// method
-		moveBy(x:number, y:number);
+        moveBy(x: number, y: number);
 
-		moveTo(x:number, y:number);
+        moveTo(x: number, y: number);
 	}
 
 	class Entity extends Node {
 		// field
-		backgroundColor:string;
-		buttonMode:string;
-		buttonPressed:boolean;
-		compositeOperation:string;
-		height:number;
-		opacity:number;
-		originX:number;
-		originY:number;
+        backgroundColor: string;
+        buttonMode: string;
+        buttonPressed: boolean;
+        compositeOperation: string;
+        height: number;
+        opacity: number;
+        originX: number;
+        originY: number;
 		rotation:number;
-		scaleX:number;
-		scaleY:number;
-		touchEnabled:boolean;
-		visible:boolean;
-		width:number;
+        scaleX: number;
+        scaleY: number;
+        touchEnabled: boolean;
+        visible: boolean;
+        width: number;
 
 		// method
 		disableCollection();
 
 		enableCollection();
 
-		intersect(other:{x:number;y:number;width:number;height:number;}):boolean;
+        intersect(other: { x: number; y: number; width: number; height: number; }): boolean;
 
-		rotate(deg:number);
+        rotate(deg: number);
 
-		scale(x:number, y:number);
+        scale(x: number, y: number);
 
-		within(other:{x:number;y:number;width:number;height:number;}, distance?:number):boolean;
+        within(other: { x: number; y: number; width: number; height: number; }, distance?: number): boolean;
 	}
 
 	class Sprite extends Entity {
-		constructor(weight:number, height:number);
+        constructor(weight: number, height: number);
 
 		// field
         frame: number[] | number;
-		height:number;
-		width:number;
-		image:Surface;
+        height: number;
+        width: number;
+        image: Surface;
 	}
 
 	class Action {
@@ -200,76 +200,76 @@ declare module enchant {
 	}
 
 	class Event {
-		constructor(type:string);
+        constructor(type: string);
 
 		// field
-		static A_BUTTON_DOWN:any;
-		static A_BUTTON_UP:any;
-		static ACTION_ADDED:any;
-		static ACTION_END:any;
-		static ACTION_REMOVED:any;
-		static ACTION_START:any;
-		static ACTION_TICK:any;
-		static ADDED:any;
-		static ADDED_TO_SCENE:any;
-		static ADDED_TO_TIMELINE:any;
-		static B_BUTTON_DOWN:any;
-		static B_BUTTON_UP:any;
-		static CHILD_ADDED:any;
-		static CHILD_REMOVED:any;
-		static DOWN_BUTTON_DOWN:any;
-		static DOWN_BUTTON_UP:any;
-		static ENTER:any;
-		static ENTER_FRAME:any;
-		static EXIT:any;
-		static EXIT_FRAME:any;
-		static INPUT_CHANGE:any;
-		static INPUT_END:any;
-		static INPUT_START:any;
-		static LEFT_BUTTON_DOWN:any;
-		static LEFT_BUTTON_UP:any;
-		static LOAD:any;
-		static PROGRESS:any;
-		static REMOVED:any;
-		static REMOVED_FROM_SCENE:any;
-		static REMOVED_FROM_TIMELINE:any;
-		static RENDER:any;
-		static RIGHT_BUTTON_DOWN:any;
-		static RIGHT_BUTTON_UP:any;
-		static TOUCH_END:any;
-		static TOUCH_MOVE:any;
-		static TOUCH_START:any;
-		static UP_BUTTON_DOWN:any;
-		static UP_BUTTON_UP:any;
+        static A_BUTTON_DOWN: any;
+        static A_BUTTON_UP: any;
+        static ACTION_ADDED: any;
+        static ACTION_END: any;
+        static ACTION_REMOVED: any;
+        static ACTION_START: any;
+        static ACTION_TICK: any;
+        static ADDED: any;
+        static ADDED_TO_SCENE: any;
+        static ADDED_TO_TIMELINE: any;
+        static B_BUTTON_DOWN: any;
+        static B_BUTTON_UP: any;
+        static CHILD_ADDED: any;
+        static CHILD_REMOVED: any;
+        static DOWN_BUTTON_DOWN: any;
+        static DOWN_BUTTON_UP: any;
+        static ENTER: any;
+        static ENTER_FRAME: any;
+        static EXIT: any;
+        static EXIT_FRAME: any;
+        static INPUT_CHANGE: any;
+        static INPUT_END: any;
+        static INPUT_START: any;
+        static LEFT_BUTTON_DOWN: any;
+        static LEFT_BUTTON_UP: any;
+        static LOAD: any;
+        static PROGRESS: any;
+        static REMOVED: any;
+        static REMOVED_FROM_SCENE: any;
+        static REMOVED_FROM_TIMELINE: any;
+        static RENDER: any;
+        static RIGHT_BUTTON_DOWN: any;
+        static RIGHT_BUTTON_UP: any;
+        static TOUCH_END: any;
+        static TOUCH_MOVE: any;
+        static TOUCH_START: any;
+        static UP_BUTTON_DOWN: any;
+        static UP_BUTTON_UP: any;
 
-		localX:number;
-		localY:number;
-		target:any;
-		type:string;
-		x:number;
-		y:number;
+        localX: number;
+        localY: number;
+        target: any;
+        type: string;
+        x: number;
+        y: number;
 	}
 
 	class Group extends Node {
-		constructor();
+        constructor();
 
 		// field
-		childNodes:Node[];
-		firstChild:Node;
-		lastChild:Node;
-		originX:number;
-		originY:number;
-		rotation:number;
-		scaleX:number;
-		scaleY:number;
+        childNodes: Node[];
+        firstChild: Node;
+        lastChild: Node;
+        originX: number;
+        originY: number;
+        rotation: number;
+        scaleX: number;
+        scaleY: number;
 
 		// method
 
-		addChild(node:Node);
+        addChild(node: Node);
 
-		insertBefore(node:Node, reference:Node);
+        insertBefore(node: Node, reference: Node);
 
-		removeChild(node:Node);
+        removeChild(node: Node);
 	}
 
     class Label extends Entity {
@@ -306,71 +306,71 @@ declare module enchant {
 		constructor(node:Node, unitialized?:boolean);
 
 		// method
-		action(params):Timeline;
+        action(params): Timeline;
 
-		and():Timeline;
+        and(): Timeline;
 
-		clear():Timeline;
+        clear(): Timeline;
 
-		cue(cue:any):void;
+        cue(cue: any): void;
 
-		delay(time:number):Timeline;
+        delay(time: number): Timeline;
 
-		exec(func:Function):void;
+        exec(func: Function): void;
 
-		fadeIn(time:number, easing?:Function):Timeline;
+        fadeIn(time: number, easing?: Function): Timeline;
 
-		fadeOut(time:number, easing?:Function):Timeline;
+        fadeOut(time: number, easing?: Function): Timeline;
 
-		fadeTo(opacity:number, time:number, easing?:Function):Timeline;
+        fadeTo(opacity: number, time: number, easing?: Function): Timeline;
 
-		hide():Timeline;
+        hide(): Timeline;
 
-		loop():Timeline;
+        loop(): Timeline;
 
-		moveBy(x:number, y:number, time:number, easing?:Function):Timeline;
+        moveBy(x: number, y: number, time: number, easing?: Function): Timeline;
 
-		moveTo(x:number, y:number, time:number, easing?:Function):Timeline;
+        moveTo(x: number, y: number, time: number, easing?: Function): Timeline;
 
-		moveX(x:number, time:number, easing?:Function):Timeline;
+        moveX(x: number, time: number, easing?: Function): Timeline;
 
-		moveY(y:number, time:number, easing?:Function):Timeline;
+        moveY(y: number, time: number, easing?: Function): Timeline;
 
-		next(remainingTime:any):void;
+        next(remainingTime: any): void;
 
-		pause():Timeline;
+        pause(): Timeline;
 
-		removeFromScene():Timeline;
+        removeFromScene(): Timeline;
 
-		repeat(func:Function, time:number):Timeline;
+        repeat(func: Function, time: number): Timeline;
 
-		resume():Timeline;
+        resume(): Timeline;
 
-		rotateBy(deg:number, time:number, easing?:Function):Timeline;
+        rotateBy(deg: number, time: number, easing?: Function): Timeline;
 
-		rotateTo(deg:number, time:number, easing?:Function):Timeline;
+        rotateTo(deg: number, time: number, easing?: Function): Timeline;
 
-		scaleBy(scaleX:number, scaleY:number, time:number, easing?:Function):Timeline;
+        scaleBy(scaleX: number, scaleY: number, time: number, easing?: Function): Timeline;
 
-		scaleTo(scaleX:number, scaleY:number, time:number, easing?:Function):Timeline;
+        scaleTo(scaleX: number, scaleY: number, time: number, easing?: Function): Timeline;
 
-		setFrameBased():void;
+        setFrameBased(): void;
 
-		setTimeBased():void;
+        setTimeBased(): void;
 
-		show():Timeline;
+        show(): Timeline;
 
-		skip(frames:number):Timeline;
+        skip(frames: number): Timeline;
 
-		then(func:Function):Timeline;
+        then(func: Function): Timeline;
 
-		tick(enterFrameEvent):void;
+        tick(enterFrameEvent): void;
 
-		tween(params):Timeline;
+        tween(params): Timeline;
 
-		unloop():Timeline;
+        unloop(): Timeline;
 
-		waitUntil(func:Function):Timeline;
+        waitUntil(func: Function): Timeline;
 	}
 
 	class Tween {

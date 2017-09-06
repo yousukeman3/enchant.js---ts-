@@ -18,13 +18,13 @@
  *     bg = new AvatarBG(0);
  *     bg.y = 50;
  *     core.rootScene.addChild(bg);
- *     
+ *
  *     // show monster
  *     monster = new AvatarMonster(core.assets['bigmonster1.gif']);
  *     monster.x = 200;
  *     monster.y = 100;
  *     core.rootScene.addChild(monster);
- *     
+ *
  *     // show avatar
  *     chara = new Avatar("2:2:1:2004:21230:22480");
  *     core.rootScene.addChild(chara);
@@ -35,13 +35,11 @@
  * };
  * core.start();
  */
-
 /**
  * avatar namespace object
  * @type {Object}
  */
 enchant.avatar = {};
-
 /**
  * AvatarCharacter
  * Base class of enchant.Avatar and enchant.AvatarMonster
@@ -54,29 +52,27 @@ enchant.avatar.AvatarCharacter = enchant.Class.create(enchant.Sprite, {
      * @param width
      * @param height
      */
-    initialize: function(width, height) {
+    initialize: function (width, height) {
         enchant.Sprite.call(this, width, height);
         this.right();
-
         /**
          * Name of animation pattern;
          * @type {String}
          */
         this.action = "stop";
-
         /**
          * Array of animation patterns
          * @type {Object}
          */
-        this.animPattern = { "stop": [ 0]};
-
+        this.animPattern = { "stop": [0] };
         /**
          * Frame number of animation
          * @type {Object}
          */
         this.animFrame = 0;
-        this.addEventListener('enterframe', function() {
-            if ((~~(this.age) & 0x03) !== 0)return;
+        this.addEventListener('enterframe', function () {
+            if ((~~(this.age) & 0x03) !== 0)
+                return;
             if (this.action) {
                 var animPattern = this.animPattern[this.action];
                 this.frame = animPattern[this.animFrame];
@@ -94,22 +90,19 @@ enchant.avatar.AvatarCharacter = enchant.Class.create(enchant.Sprite, {
             }
         });
     },
-
     /**
      * Flip to left
      */
-    left: function() {
+    left: function () {
         this.scaleX = 1;
     },
     /**
      * Flip to right
      */
-    right: function() {
+    right: function () {
         this.scaleX = -1;
     }
 });
-
-
 /**
  * AvatarMonster
  * subclass of enchant.avatar.AvatarCharacter
@@ -123,22 +116,21 @@ enchant.avatar.AvatarMonster = enchant.Class.create(enchant.avatar.AvatarCharact
      * @param {image} Image of monster
      * @extends enchant.avatar.AvatarCharacter
      */
-    initialize: function(image) {
+    initialize: function (image) {
         var w = ~~(image.width / 4);
         var h = w;
         enchant.avatar.AvatarCharacter.call(this, w, h);
         this.image = image;
-        this.animPattern = { "stop": [ 4, 4, 4, 3, 3, 3],
-            "walk": [ 2, 3, 4, 3],
-            "appear": [ 0, 1, 7, 6, 5, 4, 2, 3, -1],
-            "disappear": [ 3, 2, 4, 5, 6, 7, 1, 0, -2],
-            "attack": [ 5, 4, 6, 6, 6, -1]
+        this.animPattern = { "stop": [4, 4, 4, 3, 3, 3],
+            "walk": [2, 3, 4, 3],
+            "appear": [0, 1, 7, 6, 5, 4, 2, 3, -1],
+            "disappear": [3, 2, 4, 5, 6, 7, 1, 0, -2],
+            "attack": [5, 4, 6, 6, 6, -1]
         };
         this.action = "attack";
         this.left();
     }
 });
-
 /**
  * AvatarBG
  * @scope enchant.AvatarBG.prototype
@@ -150,10 +142,9 @@ enchant.avatar.AvatarBG = enchant.Class.create(enchant.Group, {
      * @constructs
      * @extends enchant.Group
      */
-    initialize: function(mode) {
+    initialize: function (mode) {
         enchant.Group.call(this);
         var core = enchant.Core.instance;
-
         this.veryfarbg = new enchant.Sprite(320, 51);
         this.veryfarbg.y = 0;
         this.veryfarbg.image = core.assets["avatarBg2.png"];
@@ -169,7 +160,6 @@ enchant.avatar.AvatarBG = enchant.Class.create(enchant.Group, {
             this.farbgs[this.farbgs.length] = bg;
             this.addChild(bg);
         }
-
         this.tiles = [];
         for (i = 0; i < 14; i++) {
             var tile = new enchant.Sprite(32, 128);
@@ -185,7 +175,7 @@ enchant.avatar.AvatarBG = enchant.Class.create(enchant.Group, {
      * horizontal scrolling.
      * @param {int} x Offset of x coordinate.
      */
-    scroll: function(x) {
+    scroll: function (x) {
         var dx = ~~(x / 2) % 320, ddx = ~~(x) % 32 * 2;
         for (i = 0; i < 14; i++) {
             this.tiles[i].x = i * 31 - ddx - 48;
@@ -195,7 +185,6 @@ enchant.avatar.AvatarBG = enchant.Class.create(enchant.Group, {
         }
     }
 });
-
 /**
  * Avatar
  * @scope enchant.Avatar.prototype
@@ -206,11 +195,12 @@ enchant.avatar.Avatar = enchant.Class.create(enchant.avatar.AvatarCharacter, {
      * @extends enchant.avatar.AvatarCharacter
      * @constructs
      */
-    initialize: function(code) {
+    initialize: function (code) {
         enchant.avatar.AvatarCharacter.call(this, 64, 64);
         if (code) {
             this.setCode(code);
-        } else {
+        }
+        else {
             this.gender = 1;
             this.hairstyle = 1;
             this.haircolor = 0;
@@ -219,28 +209,26 @@ enchant.avatar.Avatar = enchant.Class.create(enchant.avatar.AvatarCharacter, {
             this.headpiece = 0;
             this.loadImage();
         }
-        this.animPattern = { "stop": [ 0],
-            "run": [ 1, 2, 3, 2],
-            "attack": [ 0, 2, 9, 10, 11, 5, 0, 0, 0, -1],
-            "special": [ 0, 6, 5, 13, 14, 15, 0, 0, -1],
-            "damage": [ 7, 7, 7, 7, 0, 0, 0, -1],
+        this.animPattern = { "stop": [0],
+            "run": [1, 2, 3, 2],
+            "attack": [0, 2, 9, 10, 11, 5, 0, 0, 0, -1],
+            "special": [0, 6, 5, 13, 14, 15, 0, 0, -1],
+            "damage": [7, 7, 7, 7, 0, 0, 0, -1],
             "dead": [8],
-            "demo": [ 1, 2, 3, 2, 1, 2, 3, 2, 1, 2, 3, 2, 1, 2, 3, 2, 1, 2, 3, 2, 1, 2, 3, 2, 0, 0, 0, 0, 2, 9, 10, 11, 5, 0, 0, 0,
+            "demo": [1, 2, 3, 2, 1, 2, 3, 2, 1, 2, 3, 2, 1, 2, 3, 2, 1, 2, 3, 2, 1, 2, 3, 2, 0, 0, 0, 0, 2, 9, 10, 11, 5, 0, 0, 0,
                 1, 2, 3, 2, 1, 2, 3, 2, 1, 2, 3, 2, 1, 2, 3, 2, 1, 2, 3, 2, 0, 6, 5, 13, 14, 15, 0, 0]
         };
-
-
     },
     /**
      * Reflesh avatar animation image
      */
-    loadImage: function() {
+    loadImage: function () {
         var ___EnchantAvatarServerURL = "http://9leap.net/meruru/draw/draw.php";
         this.opt = "gender=" + this.gender + "&job=0&hairstyle=" + this.hairstyle + "&haircolor=" + this.haircolor + "&weapon=" + this.weapon + "&armor=" + this.armor + "&headpiece=" + this.headpiece + "&invisible=0&x=0&y=0&w=4&h=4&dummy=.gif";
         this.src = ___EnchantAvatarServerURL + "?" + this.opt;
-        (function(that) {
+        (function (that) {
             var core = enchant.Core.instance;
-            core.load(that.src, function() {
+            core.load(that.src, function () {
                 that.image = core.assets[that.src];
             });
         })(this);
@@ -249,7 +237,7 @@ enchant.avatar.Avatar = enchant.Class.create(enchant.avatar.AvatarCharacter, {
      * Get avatar code from actual object
      * @return {String} code;
      */
-    getCode: function() {
+    getCode: function () {
         return this.gender + ":" + this.hairstyle + ":" + this.haircolor + ":" +
             this.weapon + ":" + this.armor + ":" + this.headpiece;
     },
@@ -257,7 +245,7 @@ enchant.avatar.Avatar = enchant.Class.create(enchant.avatar.AvatarCharacter, {
      * Set avatar code and reflesh avatar image.
      * @param {String} code
      */
-    setCode: function(code) {
+    setCode: function (code) {
         data = code.split(":");
         this.gender = data[0];
         this.hairstyle = data[1];
@@ -268,3 +256,4 @@ enchant.avatar.Avatar = enchant.Class.create(enchant.avatar.AvatarCharacter, {
         this.loadImage();
     }
 });
+//# sourceMappingURL=avatar.enchant.js.map
