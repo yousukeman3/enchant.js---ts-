@@ -16,7 +16,7 @@ window.onload = function () {
         var ownMachine = new enchant.Sprite(32, 32);
         ownMachine.image = game.assets["http://coderun.9leap.net/codes/132391/shooting.png"];
         scene1.addChild(ownMachine);
-        var bullets: enchant.Sprite[];
+        var bullets: enchant.Sprite[] = [];
         ownMachine.y = 320 - 32;
         game.keybind('D'.charCodeAt(0), 'Dash');
         game.keybind('S'.charCodeAt(0), 'Shoot');
@@ -36,27 +36,31 @@ window.onload = function () {
             }
             if (game.input.left) {
                 ownMachine.x -= 4;
-                if (game.input.d) {
+                if (game.input.Dash) {
                     ownMachine.x -= 4;
                 }
                 if (ownMachine.x < 0){
                     ownMachine.x = 0;
                 }
-            }
+            } 
+            console.log(bullets.length);
+            bullets.forEach(function (bullet, index, bulletAllay) {
+                if (!(bullet == null && bullet == undefined)) {
+                    bullet.y -= 10;
+                    if (bullet.y < 0) {
+                        scene1.removeChild(bullet);
+                        bullets.unshift();
+                        console.log(bullets.length)
+                    }
+                }
+            });
             if (game.input.Shoot) {
-                bullets.forEach(function (bullet, index, bulles) {
-                    if (bullet == null || bullet == undefined) {
-                        bullet = new enchant.Sprite(32, 32);
-                        bullet.x = ownMachine.x;
-                        bullet.y = ownMachine.y + 32;
-                    }
-                    if (!(bullet == null || bullet == undefined)) {
-                        bullet.y += 10;
-                        if (bullet.y > 320) {
-                            bullet = null;
-                        }
-                    }
-                });
+                    var index = bullets.push(new enchant.Sprite(32, 32)) - 1;
+                    bullets[index].image = game.assets["http://coderun.9leap.net/codes/132391/shooting.png"];
+                    bullets[index].frame = 2;
+                    bullets[index].x = ownMachine.x;
+                    bullets[index].y = ownMachine.y - 32;
+                    scene1.addChild(bullets[index]);
             }
         });
         game.pushScene(scene1);
