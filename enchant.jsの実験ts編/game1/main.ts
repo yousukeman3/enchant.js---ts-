@@ -22,9 +22,9 @@ window.onload = function () {
         game.keybind('S'.charCodeAt(0), 'Shoot');
         var ownMachineFunc: () => void;
         var waitBullet = 5;
+        var bulletCount = 0;
 
         scene1.addEventListener('enterframe',ownMachineFunc = function (){
-            //console.log(game.input.Dash);
             if (game.input.right) {
                 ownMachine.x += 4;
                 if (game.input.Dash) {
@@ -45,23 +45,26 @@ window.onload = function () {
             } 
             console.log(bullets.length);
             bullets.forEach(function (bullet, index, bulletAllay) {
-                if (!(bullet == null && bullet == undefined)) {
+                if (!(bullet == null || bullet == undefined)) {
                     bullet.y -= 10;
                     if (bullet.y < 0) {
                         scene1.removeChild(bullet);
                         bullets.shift();
-                        console.log(bullets.length)
+                        console.log(bullets.length);
                     }
                 }
             });
-            if (game.input.Shoot) {
-                    var index = bullets.push(new enchant.Sprite(32, 32)) - 1;
-                    bullets[index].image = game.assets["http://coderun.9leap.net/codes/132391/shooting.png"];
-                    bullets[index].frame = 2;
-                    bullets[index].x = ownMachine.x;
-                    bullets[index].y = ownMachine.y - 32;
-                    scene1.addChild(bullets[index]);
+            if (game.input.Shoot && bulletCount > 5) {
+                var index = bullets.push(new enchant.Sprite(32, 32)) - 1;
+                bullets[index].image = game.assets["http://coderun.9leap.net/codes/132391/shooting.png"];
+                bullets[index].frame = 2;
+                bullets[index].x = ownMachine.x;
+                bullets[index].y = ownMachine.y - 32;
+                scene1.addChild(bullets[index]);
+                bulletCount = 0;
+
             }
+            bulletCount++;
         });
         game.pushScene(scene1);
     };
