@@ -46,7 +46,7 @@ window.onload = function () {
                     bullet.y -= 10;
                     if (bullet.y < 0) {
                         scene1.removeChild(bullet);
-                        bullets.unshift();
+                        bullets.shift();
                         console.log(bullets.length);
                     }
                 }
@@ -65,5 +65,5 @@ window.onload = function () {
     game.start();
 };
 //seで困ったらこれをつかえ
-//http://wikiwiki.jp/piporpg/?%A5%B5%A5%A6%A5%F3%A5%C9%C1%C7%BA%E0%20%C7%DB%C9%DB%A5%B5%A5%A4%A5%C8 
+//http://wikiwiki.jp/piporpg/?%A5%B5%A5%A6%A5%F3%A5%C9%C1%C7%BA%E0%20%C7%DB%C9%DB%A5%B5%A5%A4%A5%C8
 //# sourceMappingURL=main.js.map
