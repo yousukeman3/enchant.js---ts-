@@ -49,7 +49,7 @@ window.onload = function () {
                     bullet.y -= 10;
                     if (bullet.y < 0) {
                         scene1.removeChild(bullet);
-                        bullets.unshift();
+                        bullets.shift();
                         console.log(bullets.length)
                     }
                 }
