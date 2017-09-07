@@ -38,7 +38,7 @@ window.onload = function () {
 
         let waitenemy = 0;
         let enemyCount = 0;
-        let enemyrate = 90;
+        let enemyrate = 45;
         let enemySpeed = 5;
 
 

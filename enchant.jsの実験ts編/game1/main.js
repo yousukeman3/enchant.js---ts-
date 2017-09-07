@@ -27,7 +27,7 @@ window.onload = function () {
         let bulletCount = 0;
         let waitenemy = 0;
         let enemyCount = 0;
-        let enemyrate = 90;
+        let enemyrate = 45;
         let enemySpeed = 5;
         let ownMachineFunc = function () {
             if (game.input.right) {
