@@ -116,6 +116,7 @@ window.onload = function () {
             bulletCount++;
         };
 
+
         let enemyFunc = function () {
             enemys.forEach(function (enemy, index, enemyAllay) {
                 if (!(enemy == null || enemy == undefined)) {
