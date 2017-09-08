@@ -3,9 +3,7 @@
 // code.9leap.net default template
 // based on enchant.js v0.7.1
 let myRandom = function (max, min) {
-    let _ = Math.round(Math.random() * (max + 1 - min)) + min;
-    //console.log(_);
-    return _;
+    return Math.round(Math.random() * (max + 1 - min)) + min;
 };
 enchant();
 window.onload = function () {

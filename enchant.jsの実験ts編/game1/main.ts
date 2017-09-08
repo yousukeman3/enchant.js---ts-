@@ -4,7 +4,7 @@
 // based on enchant.js v0.7.1
 
 let myRandom = function (max: number, min: number) {
-    return Math.round(Math.random() * (max + 1 - min)) + min);
+    return Math.round(Math.random() * (max + 1 - min)) + min;
 }
 
 enchant();
