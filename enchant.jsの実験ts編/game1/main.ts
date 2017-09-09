@@ -30,7 +30,7 @@ window.onload = function () {
         let score = 0;
 
         let scoreLabel = new enchant.Label();
-        scoreLabel.text = "score:" + score;
+        scoreLabel.text = "score:" + score + "          →と←で機体操作、Dはダッシュ、Sでシュート!!";
         scoreLabel.color = "white";
         scene1.addChild(scoreLabel);
 
@@ -49,7 +49,7 @@ window.onload = function () {
 
         let waitenemy = 0;
         let enemyCount = 0;
-        let enemyrate = 45;
+        let enemyrate = 50;
         let enemySpeed = 5;
 
 
@@ -57,7 +57,7 @@ window.onload = function () {
             if (game.input.Retry) {
                 scene1.removeChild(gameover);
                 score = 0;
-                scoreLabel.text = "score:" + score;
+                scoreLabel.text = "score:" + score + "          →と←で機体操作、Dはダッシュ、Sでシュート!!";
                 scene1.removeEventListener("enterframe", gameoverFunc);
                 scene1.addEventListener("enterframe", ownMachineFunc);
                 scene1.addEventListener("enterframe", bulletFunc);
@@ -144,13 +144,14 @@ window.onload = function () {
                         scene1.removeChild(enemy);
                         enemys.splice(index, 1);
                         score++;
-                        scoreLabel.text = "score:" + score;
+                        scoreLabel.text = "score:" + score + "          →と←で機体操作、Dはダッシュ、Sでシュート!!";
                     }
                 });
             });
             enemys.forEach(function (enemy, index, enemyAllay) {
                 if (enemy.within(ownMachine, 16) || enemy.y > 320 - 32) {
-                    //gameoverだお
+                    console.log("gameoverだお");
+                    scoreLabel.text = "score:" + score + "          スペースキーでコンテニュー";
                     scene1.removeEventListener("enterframe", ownMachineFunc);
                     scene1.removeEventListener("enterframe", bulletFunc);
                     scene1.removeEventListener("enterframe", enemyFunc);
@@ -166,6 +167,8 @@ window.onload = function () {
                     scene1.addChild(gameover);
                     scene1.addEventListener("enterframe", gameoverFunc);
                 }
+                    
+                
             });
         }
 
