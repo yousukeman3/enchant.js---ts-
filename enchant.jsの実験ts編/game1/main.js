@@ -76,7 +76,7 @@ window.onload = function () {
                     if (bullet.y < -32) {
                         scene1.removeChild(bullet);
                         bullets.shift();
-                        //console.log(bullets.length);
+                        console.log(bullets.length);
                     }
                 }
             });
@@ -98,6 +98,7 @@ window.onload = function () {
                     if (enemy.y > 320) {
                         scene1.removeChild(enemy);
                         enemys.shift();
+                        console.log(enemys.length);
                     }
                 }
             });
