@@ -31,9 +31,11 @@ window.onload = () => {
         gameover.y = (game.height - 97) / 2;
         let bullets = [];
         let enemys = [];
-        let waitBullet = 5;
+        let ownMachineSpeed = 4;
+        let ownMachineSpeedAddition = 4;
+        let waitBullet = 0;
         let bulletCount = 0;
-        let waitenemy = 0;
+        let waitenemy = 5;
         let enemyCount = 0;
         let enemyrate = 50;
         let enemySpeed = 5;
@@ -51,18 +53,18 @@ window.onload = () => {
         };
         let ownMachineFunc = () => {
             if (game.input.right) {
-                ownMachine.x += 4;
+                ownMachine.x += ownMachineSpeed;
                 if (game.input.Dash) {
-                    ownMachine.x += 4;
+                    ownMachine.x += ownMachineSpeedAddition;
                 }
                 if (ownMachine.x > 320 - 32) {
                     ownMachine.x = 320 - 32;
                 }
             }
             if (game.input.left) {
-                ownMachine.x -= 4;
+                ownMachine.x -= ownMachineSpeed;
                 if (game.input.Dash) {
-                    ownMachine.x -= 4;
+                    ownMachine.x -= ownMachineSpeedAddition;
                 }
                 if (ownMachine.x < 0) {
                     ownMachine.x = 0;
