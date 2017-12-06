@@ -30,6 +30,8 @@ window.onload = () => {
         gameover.x = (game.width - 190) / 2;
         gameover.y = (game.height - 97) / 2;
         let bullets = [];
+        let bulletsLeft = [];
+        let bulletsRight = [];
         let enemys = [];
         let ownMachineSpeed = 4;
         let ownMachineSpeedAddition = 4;
@@ -72,6 +74,29 @@ window.onload = () => {
             }
         };
         let bulletFunc = () => {
+            //console.log(bullets.length);
+            bullets.forEach(function (bullet, index, bulletAllay) {
+                if (!(bullet == null || bullet == undefined)) {
+                    bullet.y -= 10;
+                    if (bullet.y < -32) {
+                        scene1.removeChild(bullet);
+                        bullets.shift();
+                        console.log(bullets.length);
+                    }
+                }
+            });
+            if (game.input.Shoot && bulletCount > waitBullet) {
+                let index = bullets.push(new enchant.Sprite(32, 32)) - 1;
+                bullets[index].image = game.assets["shooting.png"];
+                bullets[index].frame = 2;
+                bullets[index].x = ownMachine.x;
+                bullets[index].y = ownMachine.y - 32;
+                scene1.addChild(bullets[index]);
+                bulletCount = 0;
+            }
+            bulletCount++;
+        };
+        let bulletFuncBeta = () => {
             //console.log(bullets.length);
             bullets.forEach(function (bullet, index, bulletAllay) {
                 if (!(bullet == null || bullet == undefined)) {
