@@ -97,7 +97,7 @@ window.onload = () => {
         
         let bulletFunc = () => {
             //console.log(bullets.length);
-            bullets.forEach(function (bullet, index, bulletAllay) {
+            bullets.forEach((bullet, index, bulletAllay) => {
                 if (!(bullet == null || bullet == undefined)) {
                     bullet.y -= 10;
                     
