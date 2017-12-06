@@ -10,7 +10,7 @@ window.onload = () => {
     let game = new enchant.Core(320, 320);
     game.fps = 15;
     game.preload("bg.png", "shooting.png");
-    game.onload = function () {
+    game.onload = () => {
         let scene1 = new enchant.Scene();
         let backgroundImage = new enchant.Sprite(320, 320);
         //backgroundImage.scale(game.width / backgroundImage.width, game.height / backgroundImage.height);
@@ -98,7 +98,27 @@ window.onload = () => {
         };
         let bulletFuncBeta = () => {
             //console.log(bullets.length);
-            bullets.forEach(function (bullet, index, bulletAllay) {
+            bullets.forEach((bullet, index, bulletAllay) => {
+                if (!(bullet == null || bullet == undefined)) {
+                    bullet.y -= 10;
+                    if (bullet.y < -32) {
+                        scene1.removeChild(bullet);
+                        bullets.shift();
+                        console.log(bullets.length);
+                    }
+                }
+            });
+            bullets.forEach((bullet, index, bulletAllay) => {
+                if (!(bullet == null || bullet == undefined)) {
+                    bullet.y -= 10;
+                    if (bullet.y < -32) {
+                        scene1.removeChild(bullet);
+                        bullets.shift();
+                        console.log(bullets.length);
+                    }
+                }
+            });
+            bullets.forEach((bullet, index, bulletAllay) => {
                 if (!(bullet == null || bullet == undefined)) {
                     bullet.y -= 10;
                     if (bullet.y < -32) {
@@ -120,7 +140,7 @@ window.onload = () => {
             bulletCount++;
         };
         let enemyFunc = () => {
-            enemys.forEach(function (enemy, index, enemyAllay) {
+            enemys.forEach((enemy, index, enemyAllay) => {
                 if (!(enemy == null || enemy == undefined)) {
                     enemy.y += enemySpeed;
                     if (enemy.y > game.height) {
@@ -140,8 +160,8 @@ window.onload = () => {
             }
         };
         let perDecision = () => {
-            bullets.forEach(function (bullet, indexb, bulletAllay) {
-                enemys.forEach(function (enemy, index, enemyAllay) {
+            bullets.forEach((bullet, indexb, bulletAllay) => {
+                enemys.forEach((enemy, index, enemyAllay) => {
                     //console.log("〇");
                     if (bullet.within(enemy, 16)) {
                         scene1.removeChild(enemy);
