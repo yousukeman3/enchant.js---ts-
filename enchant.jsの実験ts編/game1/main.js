@@ -33,14 +33,16 @@ window.onload = () => {
         let bulletsLeft = [];
         let bulletsRight = [];
         let enemys = [];
-        let ownMachineSpeed = 4;
-        let ownMachineSpeedAddition = 4;
-        let waitBullet = 0;
+        const ownMachineSpeed = 4;
+        const ownMachineSpeedAddition = 4;
+        const waitBullet = 0;
         let bulletCount = 0;
-        let waitenemy = 5;
+        let bulletCountLeft = 0;
+        let bulletCountRight = 0;
+        let bulletWide = 5;
         let enemyCount = 0;
-        let enemyrate = 50;
-        let enemySpeed = 5;
+        const enemyRate = 50;
+        const enemySpeed = 5;
         let gameoverFunc = () => {
             if (game.input.Retry) {
                 scene1.removeChild(gameover);
@@ -48,9 +50,9 @@ window.onload = () => {
                 scoreLabel.text = "score:" + score + "          →と←で機体操作、Dはダッシュ、Sでシュート!!";
                 scene1.removeEventListener("enterframe", gameoverFunc);
                 scene1.addEventListener("enterframe", ownMachineFunc);
-                scene1.addEventListener("enterframe", bulletFunc);
+                scene1.addEventListener("enterframe", bulletFuncBeta);
                 scene1.addEventListener("enterframe", enemyFunc);
-                scene1.addEventListener("enterframe", perDecision);
+                scene1.addEventListener("enterframe", perDecisionBeta);
             }
         };
         let ownMachineFunc = () => {
@@ -98,46 +100,39 @@ window.onload = () => {
         };
         let bulletFuncBeta = () => {
             //console.log(bullets.length);
-            bullets.forEach((bullet, index, bulletAllay) => {
-                if (!(bullet == null || bullet == undefined)) {
-                    bullet.y -= 10;
-                    if (bullet.y < -32) {
-                        scene1.removeChild(bullet);
-                        bullets.shift();
-                        console.log(bullets.length);
+            console.log("Beta");
+            let bulletMove = (bulletAllay, relativePlace) => {
+                bulletAllay.forEach((bullet, index, bulletAllay) => {
+                    if (!(bullet == null || bullet == undefined)) {
+                        bullet.y -= 10;
+                        bullet.x += relativePlace;
+                        if (bullet.y < -32) {
+                            scene1.removeChild(bullet);
+                            bulletAllay.shift();
+                            console.log(bulletAllay.length);
+                        }
                     }
+                });
+            };
+            let bulletCleate = (bulletAllay, relativePlace, bulletCounter) => {
+                if (game.input.Shoot && bulletCounter > waitBullet) {
+                    let index = bulletAllay.push(new enchant.Sprite(32, 32)) - 1;
+                    bulletAllay[index].image = game.assets["shooting.png"];
+                    bulletAllay[index].frame = 2;
+                    bulletAllay[index].x = ownMachine.x + relativePlace;
+                    bulletAllay[index].y = ownMachine.y - 32;
+                    scene1.addChild(bulletAllay[index]);
+                    bulletCounter = 0;
                 }
-            });
-            bullets.forEach((bullet, index, bulletAllay) => {
-                if (!(bullet == null || bullet == undefined)) {
-                    bullet.y -= 10;
-                    if (bullet.y < -32) {
-                        scene1.removeChild(bullet);
-                        bullets.shift();
-                        console.log(bullets.length);
-                    }
-                }
-            });
-            bullets.forEach((bullet, index, bulletAllay) => {
-                if (!(bullet == null || bullet == undefined)) {
-                    bullet.y -= 10;
-                    if (bullet.y < -32) {
-                        scene1.removeChild(bullet);
-                        bullets.shift();
-                        console.log(bullets.length);
-                    }
-                }
-            });
-            if (game.input.Shoot && bulletCount > waitBullet) {
-                let index = bullets.push(new enchant.Sprite(32, 32)) - 1;
-                bullets[index].image = game.assets["shooting.png"];
-                bullets[index].frame = 2;
-                bullets[index].x = ownMachine.x;
-                bullets[index].y = ownMachine.y - 32;
-                scene1.addChild(bullets[index]);
-                bulletCount = 0;
-            }
-            bulletCount++;
+            };
+            let bulletsFunc = (bulletAllay, relativePlace, bulletCounter) => {
+                bulletMove(bulletAllay, relativePlace);
+                bulletCleate(bulletAllay, relativePlace, bulletCounter);
+                bulletCounter++;
+            };
+            bulletsFunc(bullets, 0, bulletCount);
+            bulletsFunc(bulletsLeft, -bulletWide, bulletCountLeft);
+            bulletsFunc(bulletsRight, bulletWide, bulletCountRight);
         };
         let enemyFunc = () => {
             enemys.forEach((enemy, index, enemyAllay) => {
@@ -150,7 +145,7 @@ window.onload = () => {
                     }
                 }
             });
-            if (myRandom(0, enemyrate) == 1) {
+            if (myRandom(0, enemyRate) == 1) {
                 let index = enemys.push(new enchant.Sprite(32, 32)) - 1;
                 enemys[index].image = game.assets["shooting.png"];
                 enemys[index].frame = 1;
@@ -158,6 +153,44 @@ window.onload = () => {
                 enemys[index].y = -32;
                 scene1.addChild(enemys[index]);
             }
+        };
+        let perDecisionBeta = () => {
+            let jugeBullet = (bulletAllay) => {
+                bulletAllay.forEach((bullet, indexb, bulletAllay) => {
+                    enemys.forEach((enemy, index, enemyAllay) => {
+                        //console.log("〇");
+                        if (bullet.within(enemy, 16)) {
+                            scene1.removeChild(enemy);
+                            enemys.splice(index, 1);
+                            score++;
+                            scoreLabel.text = "score:" + score + "          →と←で機体操作、Dはダッシュ、Sでシュート!!";
+                        }
+                    });
+                });
+            };
+            jugeBullet(bullets);
+            jugeBullet(bulletsLeft);
+            jugeBullet(bulletsRight);
+            enemys.forEach((enemy, index, enemyAllay) => {
+                if (enemy.within(ownMachine, 16) || enemy.y > game.height - 32) {
+                    console.log("gameoverだお");
+                    scoreLabel.text = "score:" + score + "          スペースキーでコンテニュー";
+                    scene1.removeEventListener("enterframe", ownMachineFunc);
+                    scene1.removeEventListener("enterframe", bulletFuncBeta);
+                    scene1.removeEventListener("enterframe", enemyFunc);
+                    scene1.removeEventListener("enterframe", perDecisionBeta);
+                    enemys.forEach((enemy, index, enemyAllay) => {
+                        scene1.removeChild(enemy);
+                    });
+                    bullets.forEach((bullet, index, bulletAllay) => {
+                        scene1.removeChild(bullet);
+                    });
+                    enemys = [];
+                    bullets = [];
+                    scene1.addChild(gameover);
+                    scene1.addEventListener("enterframe", gameoverFunc);
+                }
+            });
         };
         let perDecision = () => {
             bullets.forEach((bullet, indexb, bulletAllay) => {
@@ -176,9 +209,9 @@ window.onload = () => {
                     console.log("gameoverだお");
                     scoreLabel.text = "score:" + score + "          スペースキーでコンテニュー";
                     scene1.removeEventListener("enterframe", ownMachineFunc);
-                    scene1.removeEventListener("enterframe", bulletFunc);
+                    scene1.removeEventListener("enterframe", bulletFuncBeta);
                     scene1.removeEventListener("enterframe", enemyFunc);
-                    scene1.removeEventListener("enterframe", perDecision);
+                    scene1.removeEventListener("enterframe", perDecisionBeta);
                     enemys.forEach((enemy, index, enemyAllay) => {
                         scene1.removeChild(enemy);
                     });
@@ -196,7 +229,7 @@ window.onload = () => {
         game.keybind('S'.charCodeAt(0), 'Shoot');
         game.keybind(' '.charCodeAt(0), 'Retry');
         scene1.addEventListener("enterframe", ownMachineFunc);
-        scene1.addEventListener("enterframe", bulletFunc);
+        scene1.addEventListener("enterframe", bulletFuncBeta);
         scene1.addEventListener("enterframe", enemyFunc);
         scene1.addEventListener("enterframe", perDecision);
         game.pushScene(scene1);
