@@ -13,7 +13,6 @@ window.onload = () => {
     game.onload = () => {
         let scene1 = new enchant.Scene();
         let backgroundImage = new enchant.Sprite(320, 320);
-        //backgroundImage.scale(game.width / backgroundImage.width, game.height / backgroundImage.height);
         backgroundImage.image = game.assets["bg.png"];
         scene1.addChild(backgroundImage);
         let ownMachine = new enchant.Sprite(32, 32);
@@ -114,7 +113,19 @@ window.onload = () => {
                     }
                 });
             };
-            let bulletCleate = (bulletAllay, relativePlace, bulletCounter) => {
+            let bulletCleate = (bulletAllay, relativePlace, bulletLine) => {
+                let bulletCounter;
+                switch (bulletLine) {
+                    case "center": {
+                        bulletCounter = bulletCount;
+                    }
+                    case "left": {
+                        bulletCounter = bulletCountLeft;
+                    }
+                    case "right": {
+                        bulletCounter = bulletCountRight;
+                    }
+                }
                 if (game.input.Shoot && bulletCounter > waitBullet) {
                     let index = bulletAllay.push(new enchant.Sprite(32, 32)) - 1;
                     bulletAllay[index].image = game.assets["shooting.png"];
@@ -125,14 +136,24 @@ window.onload = () => {
                     bulletCounter = 0;
                 }
             };
-            let bulletsFunc = (bulletAllay, relativePlace, bulletCounter) => {
+            let bulletsFunc = (bulletAllay, relativePlace, bulletLine) => {
                 bulletMove(bulletAllay, relativePlace);
-                bulletCleate(bulletAllay, relativePlace, bulletCounter);
-                bulletCounter++;
+                bulletCleate(bulletAllay, relativePlace, bulletLine);
+                switch (bulletLine) {
+                    case "center": {
+                        bulletCount++;
+                    }
+                    case "left": {
+                        bulletCountLeft++;
+                    }
+                    case "right": {
+                        bulletCountRight++;
+                    }
+                }
             };
-            bulletsFunc(bullets, 0, bulletCount);
-            bulletsFunc(bulletsLeft, -bulletWide, bulletCountLeft);
-            bulletsFunc(bulletsRight, bulletWide, bulletCountRight);
+            bulletsFunc(bullets, 0, "center");
+            bulletsFunc(bulletsLeft, -bulletWide, "left");
+            bulletsFunc(bulletsRight, bulletWide, "right");
         };
         let enemyFunc = () => {
             enemys.forEach((enemy, index, enemyAllay) => {
@@ -231,7 +252,7 @@ window.onload = () => {
         scene1.addEventListener("enterframe", ownMachineFunc);
         scene1.addEventListener("enterframe", bulletFuncBeta);
         scene1.addEventListener("enterframe", enemyFunc);
-        scene1.addEventListener("enterframe", perDecision);
+        scene1.addEventListener("enterframe", perDecisionBeta);
         game.pushScene(scene1);
     };
     game.start();

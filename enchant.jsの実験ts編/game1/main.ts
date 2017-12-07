@@ -17,7 +17,6 @@ window.onload = () => {
 
         let scene1 = new enchant.Scene();
         let backgroundImage = new enchant.Sprite(320, 320);
-        //backgroundImage.scale(game.width / backgroundImage.width, game.height / backgroundImage.height);
         backgroundImage.image = game.assets["bg.png"];
         scene1.addChild(backgroundImage);
 
@@ -51,9 +50,9 @@ window.onload = () => {
         const ownMachineSpeedAddition = 4;
 
         const waitBullet = 0;
-        let bulletCount = new Number(0);
-        let bulletCountLeft = new Number(0);
-        let bulletCountRight = new Number(0);
+        let bulletCount = 0;
+        let bulletCountLeft = 0;
+        let bulletCountRight = 0;
         let bulletWide = 5
         
         let enemyCount = 0;
@@ -119,7 +118,7 @@ window.onload = () => {
                 scene1.addChild(bullets[index]);
                 bulletCount = 0;
             }
-            bulletCount = bulletCount + 1;
+            bulletCount ++;
         };
 
 
@@ -140,7 +139,19 @@ window.onload = () => {
                     }
                 });
             }
-            let bulletCleate = (bulletAllay: enchant.Sprite[], relativePlace: number, bulletCounter: number) => {
+            let bulletCleate = (bulletAllay: enchant.Sprite[], relativePlace: number, bulletLine: string) => {
+                let bulletCounter
+                switch (bulletLine) {
+                    case "center": {
+                        bulletCounter = bulletCount;
+                    }
+                    case "left": {
+                        bulletCounter = bulletCountLeft;
+                    }
+                    case "right": {
+                        bulletCounter = bulletCountRight;
+                    }
+                }
                 if (game.input.Shoot && bulletCounter > waitBullet) {
                     let index = bulletAllay.push(new enchant.Sprite(32, 32)) - 1;
                     bulletAllay[index].image = game.assets["shooting.png"];
@@ -151,14 +162,24 @@ window.onload = () => {
                     bulletCounter = 0;
                 }
             }
-            let bulletsFunc = (bulletAllay: enchant.Sprite[], relativePlace: number, bulletCounter: number) => {
+            let bulletsFunc = (bulletAllay: enchant.Sprite[], relativePlace: number, bulletLine: string) => {
                 bulletMove(bulletAllay, relativePlace);
-                bulletCleate(bulletAllay, relativePlace, bulletCounter);
-                bulletCounter++;
+                bulletCleate(bulletAllay, relativePlace, bulletLine);
+                switch (bulletLine) {
+                    case "center": {
+                        bulletCount++;
+                    }
+                    case "left": {
+                        bulletCountLeft++;
+                    }
+                    case "right": {
+                        bulletCountRight++;
+                    }
+                }
             }
-            bulletsFunc(bullets, 0, bulletCount);
-            bulletsFunc(bulletsLeft,-bulletWide, bulletCountLeft);
-            bulletsFunc(bulletsRight, bulletWide, bulletCountRight);
+            bulletsFunc(bullets, 0, "center");
+            bulletsFunc(bulletsLeft,-bulletWide, "left");
+            bulletsFunc(bulletsRight, bulletWide, "right");
         };
 
 
@@ -270,7 +291,7 @@ window.onload = () => {
         scene1.addEventListener("enterframe", ownMachineFunc);
         scene1.addEventListener("enterframe", bulletFuncBeta);
         scene1.addEventListener("enterframe", enemyFunc);
-        scene1.addEventListener("enterframe", perDecision);
+        scene1.addEventListener("enterframe", perDecisionBeta);
         game.pushScene(scene1);
     };
     game.start();
